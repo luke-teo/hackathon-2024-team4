@@ -2,19 +2,36 @@ import {
   Autocomplete,
   Avatar,
   Box,
+  IconButton,
   InputAdornment,
+  ListItem,
   TextField,
   Typography,
 } from "@mui/material";
 import { users } from "../../utils/users";
-import { useContext } from "react";
+import { type MouseEvent, useContext, useState } from "react";
 import { SelectedUserContext } from "../context/SelectedUserContext";
 import SearchIcon from "@mui/icons-material/Search";
+import CloseIcon from "@mui/icons-material/Close";
+import PersonIcon from "@mui/icons-material/Person";
+import { colors } from "../../utils/colors";
+import type { User } from "../../utils/types";
 
 export const UserSideMenu = () => {
   const { selectedUser, setSelectedUser } = useContext(SelectedUserContext);
+  const [value, setValue] = useState<User | null>(null);
 
-  console.log(selectedUser);
+  const handleSelectUser = (u: User) => {
+    setSelectedUser(u);
+    setValue(u);
+  };
+
+  const handleDeleteUser = (e: MouseEvent) => {
+    e.preventDefault();
+    setSelectedUser(null);
+    setValue(null);
+  };
+
   return (
     <Box
       sx={{
@@ -22,13 +39,23 @@ export const UserSideMenu = () => {
         flex: 0,
         width: "100%",
         borderRadius: 2,
-        backgroundColor: "white",
+        background: colors.BackgroundBaseWhite,
       }}
     >
-      <Box sx={{ p: 2 }}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
         <Autocomplete
-          value={selectedUser}
-          onChange={(_, v) => v && setSelectedUser(v)}
+          value={value}
+          onChange={(_, v) => {
+            if (v) {
+              setSelectedUser(v);
+              setValue(v);
+            }
+          }}
           size="small"
           disablePortal
           options={users}
@@ -36,7 +63,10 @@ export const UserSideMenu = () => {
             return u.name;
           }}
           fullWidth
-          sx={{ width: 300 }}
+          sx={{
+            width: 300,
+            p: 2,
+          }}
           renderOption={(props, option) => (
             <Box
               sx={{
@@ -59,7 +89,6 @@ export const UserSideMenu = () => {
             </Box>
           )}
           renderInput={(params) => (
-            // <TextField {...params} />
             <TextField
               {...params}
               label="Search for a user..."
@@ -75,6 +104,76 @@ export const UserSideMenu = () => {
             />
           )}
         />
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          {users.map((u) => (
+            <ListItem
+              key={u.id}
+              secondaryAction={
+                <>
+                  {selectedUser?.id === u.id ? (
+                    <IconButton onClick={(e) => handleDeleteUser(e)}>
+                      <CloseIcon />
+                    </IconButton>
+                  ) : (
+                    <IconButton onClick={() => handleSelectUser(u)}>
+                      <PersonIcon
+                        sx={{
+                          color:
+                            selectedUser?.id === u.id
+                              ? colors.IconSelected
+                              : undefined,
+                        }}
+                      />
+                    </IconButton>
+                  )}
+                </>
+              }
+              sx={{
+                backgroundColor:
+                  selectedUser?.id === u.id
+                    ? colors.BackgroundSelected
+                    : undefined,
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                  }}
+                >
+                  <Avatar src={u.avatarUrl}>
+                    {u.name
+                      .split(" ")
+                      .map((part) => part[0])
+                      .join("")
+                      .toUpperCase()}
+                  </Avatar>
+                  <Typography
+                    sx={{
+                      fontSize: 14,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {u.name}
+                  </Typography>
+                </Box>
+              </Box>
+            </ListItem>
+          ))}
+        </Box>
       </Box>
     </Box>
   );

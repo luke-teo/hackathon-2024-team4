@@ -3,7 +3,7 @@ import type { User } from "../../utils/types";
 
 type SelectedUserContextType = {
     selectedUser: User | null;
-    setSelectedUser: (u: User) => void;
+    setSelectedUser: (u: User | null) => void;
 };
 export const SelectedUserContext = createContext<SelectedUserContextType>({
     selectedUser: null,
