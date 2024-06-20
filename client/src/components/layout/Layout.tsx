@@ -39,7 +39,7 @@ export const Layout = ({ children }: Props) => {
                     height: "100%",
                     display: "flex",
                     gap: 4,
-                    alignItems: "center",
+                    alignItems: "start",
                     justifyContent: "space-evenly",
                     p: 2,
                 }}

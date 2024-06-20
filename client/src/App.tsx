@@ -4,6 +4,8 @@ import { Layout } from "./components/layout/Layout";
 import { UserSideMenu } from "./components/widgets/UserSideMenu";
 import { SelectedUserProvider } from "./components/context/SelectedUserContext";
 import { ScoreChart } from "./components/widgets/ScoreChart";
+import { BehaviorScore } from "./components/widgets/BehaviorScore";
+import { Information } from "./components/widgets/Information";
 
 function App() {
 	return (
@@ -11,8 +13,16 @@ function App() {
 			<Layout>
 				<UserSideMenu />
 				<ScoreChart />
-				<Box sx={{ border: 1, height: "100%", flex: 0, minWidth: 360 }}>
-					3 here
+				<Box sx={{
+					display: "flex",
+					flex: 0,
+					flexDirection: "column",
+					height: "100%",
+					gap: 2,
+					minWidth: 360
+				}}>
+					<BehaviorScore />
+					<Information />
 				</Box>
 			</Layout>
 		</SelectedUserProvider>
