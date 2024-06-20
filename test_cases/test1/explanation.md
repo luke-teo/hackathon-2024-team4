@@ -1,0 +1,95 @@
+# 2024-04
+- UserId 1 (Dev Lead):
+    - Week 1: Feeling highly motivated and optimistic about leading the project.
+    - Week 2: Confidence remains high as initial tasks are completed smoothly.
+    - Week 3: Starting to feel overwhelmed as project complexities increase.
+    - Week 4: Feeling stressed and demotivated due to mounting challenges.
+- UserId 2 (Designer):
+    - Week 1: Feeling overwhelmed and worth, unsure about the project's direction.
+    - Week 2: Starting to feel more confident as design elements come together.
+    - Week 3: Motivation increases with positive feedback on design work.
+    - Week 4: Feeling much better and optimistic about the project's progress.
+- UserId 3 (Sales Person):
+    - Week 1: Maintaining a steady level of motivation, focused on market research.
+    - Week 2: Consistent feelings, balancing sales efforts and customer feedback.
+    - Week 3: Continues to stay motivated, preparing for the product launch.
+    - Week 4: Maintains normal feelings and motivation, ensuring customer satisfaction remains high.
+- UserId 4 (Senior Developer):
+    - Week 1: Feeling highly motivated and eager to tackle the development tasks.
+    - Week 2: Confidence remains high as initial coding progresses smoothly.
+    - Week 3: Starting to feel stressed as more complex issues arise.
+    - Week 4: Feeling demotivated and pressured by the workload and deadlines.
+- UserId 5 (Junior Developer):
+    - Week 1: Feeling worth and unsure about their role in the project.
+    - Week 2: Starting to feel more confident as they receive guidance and support.
+    - Week 3: Motivation increases as they successfully complete assigned tasks.
+    - Week 4: Feeling much better and optimistic about their contributions to the project.
+- UserId 6 (Junior Developer):
+    - Week 1: Consistently motivated, eager to learn and contribute to the team.
+    - Week 2: Maintaining steady motivation, focusing on assigned tasks.
+    - Week 3: Continues to feel normal and motivated, providing support where needed.
+    - Week 4: Motivation remains consistent, committed to the team's goal.
+
+# 2024-05
+- UserId 1 (Dev Lead):
+    - Week 1: Feeling overwhelmed and worth due to the pressure of fixing the critical bug.
+    - Week 2: Starting to feel more confident as initial progress is made on the bug.
+    - Week 3: Motivation is increasing as the team makes significant strides in identifying the root cause.
+    - Week 4: Feeling optimistic and encouraged as the bug fix nears completion.
+- UserId 2 (Designer):
+    - Week 1: Feeling highly motivated and positive, contributing creative ideas to the team.
+    - Week 2: Beginning to feel frustrated as the bug fix impacts design implementation.
+    - Week 3: Anger and demotivation set in as design changes are repeatedly postponed.
+    - Week 4: Feeling increasingly disengaged and pessimistic about the progress.
+- UserId 3 (Sales Person):
+    - Week 1: Maintaining a steady level of motivation, focused on client communication.
+    - Week 2: Consistent feelings, balancing sales efforts and customer expectations.
+    - Week 3: Continues to stay motivated, keeping clients updated with the bug fix progress.
+    - Week 4: Maintains normal feelings and motivation, ensuring customer satisfaction remains high.
+- UserId 4 (Senior Developer):
+    - Week 1: Feeling stressed and worth, pressured by the complexity of the bug.
+    - Week 2: Motivation starts to improve as potential solutions are explored.
+    - Week 3: Optimism grows with each successful test and milestone achieved.
+    - Week 4: Feeling much better, confident in the team's ability to resolve the issue soon.
+- UserId 5 (Junior Developer):
+    - Week 1: Feeling very motivated and enthusiastic about contributing to the bug fix.
+    - Week 2: Motivation begins to wane as the complexity of the bug becomes clearer.
+    - Week 3: Anger and frustration increase due to repeated setbacks and challenges.
+    - Week 4: Feeling quite demotivated and disheartened as the process drags on.
+- UserId 6 (Junior Developer):
+    - Week 1: Consistently motivated, eager to learn and contribute to the team.
+    - Week 2: Maintaining steady motivation, focusing on assigned tasks.
+    - Week 3: Continues to feel normal and motivated, providing support where needed.
+    - Week 4: Motivation remains consistent, committed to the team's goal.
+
+# 2024-06
+- UserId 1 (Dev Lead):
+    - Week 1: Feeling overwhelmed and worth due to the initial pressure of integrating new functions.
+    - Week 2: Starting to feel more confident as planning and initial implementation go smoothly.
+    - Week 3: Motivation increases with positive progress and team collaboration.
+    - Week 4: Feeling optimistic and encouraged as the new functions near completion.
+- UserId 2 (Designer):
+    - Week 1: Feeling highly motivated and excited about designing the new functions.
+    - Week 2: Confidence remains high with positive feedback on initial designs.
+    - Week 3: Starting to feel frustrated as design revisions become more frequent.
+    - Week 4: Feeling stressed and demotivated due to repeated changes and delays.
+- UserId 3 (Sales Person):
+    - Week 1: Maintaining a steady level of motivation, focused on communicating new features to clients.
+    - Week 2: Consistent feelings, balancing sales efforts and gathering client feedback.
+    - Week 3: Continues to stay motivated, preparing marketing materials for the new functions.
+    - Week 4: Maintains normal feelings and motivation, ensuring customer interest remains high.
+- UserId 4 (Senior Developer):
+    - Week 1: Feeling stressed and worth due to the complexity of the new functions.
+    - Week 2: Starting to feel more confident as the team makes progress.
+    - Week 3: Motivation increases with successful testing and debugging.
+    - Week 4: Feeling optimistic and encouraged by the team's achievements.
+- UserId 5 (Junior Developer):
+    - Week 1: Feeling highly motivated and enthusiastic about working on new features.
+    - Week 2: Confidence remains high as tasks are completed successfully.
+    - Week 3: Starting to feel overwhelmed by the complexity and volume of work.
+    - Week 4: Feeling stressed and demotivated due to mounting challenges and tight deadlines.
+- UserId 6 (Junior Developer):
+    - Week 1: Consistently motivated, eager to contribute to the new functions.
+    - Week 2: Maintaining steady motivation, focusing on assigned tasks.
+    - Week 3: Continues to feel normal and motivated, providing support where needed.
+    - Week 4: Motivation remains consistent, committed to the team's goal.
