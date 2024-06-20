@@ -1,0 +1,141 @@
+{
+    "result": [
+        {
+            "1": {
+                "data": [
+                    {"timestamp": "2024-04-01", "score": 85},
+                    {"timestamp": "2024-04-02", "score": 75},
+                    {"timestamp": "2024-04-04", "score": 80},
+                    {"timestamp": "2024-04-05", "score": 75},
+                    {"timestamp": "2024-04-07", "score": 65},
+                    {"timestamp": "2024-04-08", "score": 80},
+                    {"timestamp": "2024-04-09", "score": 90},
+                    {"timestamp": "2024-04-10", "score": 70},
+                    {"timestamp": "2024-04-11", "score": 55},
+                    {"timestamp": "2024-04-12", "score": 95},
+                    {"timestamp": "2024-04-14", "score": 60},
+                    {"timestamp": "2024-04-15", "score": 50},
+                    {"timestamp": "2024-04-16", "score": 95},
+                    {"timestamp": "2024-04-17", "score": 85},
+                    {"timestamp": "2024-04-18", "score": 50},
+                    {"timestamp": "2024-04-19", "score": 50},
+                    {"timestamp": "2024-04-20", "score": 95},
+                    {"timestamp": "2024-04-21", "score": 85},
+                    {"timestamp": "2024-04-23", "score": 55},
+                    {"timestamp": "2024-04-24", "score": 95},
+                    {"timestamp": "2024-04-25", "score": 85},
+                    {"timestamp": "2024-04-26", "score": 55}
+                ]
+            },
+            "2": {
+                "data": [
+                    {"timestamp": "2024-04-01", "score": 90},
+                    {"timestamp": "2024-04-02", "score": 85},
+                    {"timestamp": "2024-04-03", "score": 80},
+                    {"timestamp": "2024-04-04", "score": 80},
+                    {"timestamp": "2024-04-05", "score": 85},
+                    {"timestamp": "2024-04-07", "score": 95},
+                    {"timestamp": "2024-04-08", "score": 80},
+                    {"timestamp": "2024-04-10", "score": 85},
+                    {"timestamp": "2024-04-11", "score": 85},
+                    {"timestamp": "2024-04-12", "score": 40},
+                    {"timestamp": "2024-04-13", "score": 70},
+                    {"timestamp": "2024-04-19", "score": 95},
+                    {"timestamp": "2024-04-23", "score": 75},
+                    {"timestamp": "2024-04-25", "score": 90},
+                    {"timestamp": "2024-04-27", "score": 95}
+                ]
+            },
+            "3": {
+                "data": [
+                    {"timestamp": "2024-04-01", "score": 60},
+                    {"timestamp": "2024-04-03", "score": 55},
+                    {"timestamp": "2024-04-04", "score": 75},
+                    {"timestamp": "2024-04-05", "score": 80},
+                    {"timestamp": "2024-04-06", "score": 85},
+                    {"timestamp": "2024-04-07", "score": 80},
+                    {"timestamp": "2024-04-08", "score": 60},
+                    {"timestamp": "2024-04-09", "score": 70},
+                    {"timestamp": "2024-04-10", "score": 50},
+                    {"timestamp": "2024-04-12", "score": 55},
+                    {"timestamp": "2024-04-15", "score": 75},
+                    {"timestamp": "2024-04-16", "score": 75},
+                    {"timestamp": "2024-04-17", "score": 70},
+                    {"timestamp": "2024-04-18", "score": 60},
+                    {"timestamp": "2024-04-19", "score": 60},
+                    {"timestamp": "2024-04-20", "score": 65},
+                    {"timestamp": "2024-04-21", "score": 80},
+                    {"timestamp": "2024-04-22", "score": 70},
+                    {"timestamp": "2024-04-27", "score": 65},
+                    {"timestamp": "2024-04-28", "score": 80}
+                ]
+            },
+            "4": {
+                "data": [
+                    {"timestamp": "2024-04-01", "score": 80},
+                    {"timestamp": "2024-04-02", "score": 40},
+                    {"timestamp": "2024-04-03", "score": 40},
+                    {"timestamp": "2024-04-04", "score": 90},
+                    {"timestamp": "2024-04-06", "score": 30},
+                    {"timestamp": "2024-04-09", "score": 75},
+                    {"timestamp": "2024-04-10", "score": 40},
+                    {"timestamp": "2024-04-11", "score": 35},
+                    {"timestamp": "2024-04-12", "score": 85},
+                    {"timestamp": "2024-04-13", "score": 85},
+                    {"timestamp": "2024-04-14", "score": 30},
+                    {"timestamp": "2024-04-16", "score": 95},
+                    {"timestamp": "2024-04-17", "score": 85},
+                    {"timestamp": "2024-04-18", "score": 35},
+                    {"timestamp": "2024-04-19", "score": 85},
+                    {"timestamp": "2024-04-22", "score": 30},
+                    {"timestamp": "2024-04-25", "score": 75},
+                    {"timestamp": "2024-04-26", "score": 45},
+                    {"timestamp": "2024-04-28", "score": 90}
+                ]
+            },
+            "5": {
+                "data": [
+                    {"timestamp": "2024-04-04", "score": 35},
+                    {"timestamp": "2024-04-05", "score": 60},
+                    {"timestamp": "2024-04-09", "score": 70},
+                    {"timestamp": "2024-04-10", "score": 85},
+                    {"timestamp": "2024-04-13", "score": 80},
+                    {"timestamp": "2024-04-19", "score": 90},
+                    {"timestamp": "2024-04-23", "score": 80},
+                    {"timestamp": "2024-04-24", "score": 25},
+                    {"timestamp": "2024-04-25", "score": 85},
+                    {"timestamp": "2024-04-26", "score": 75},
+                    {"timestamp": "2024-04-27", "score": 65}
+                ]
+            },
+            "6": {
+                "data": [
+                    {"timestamp": "2024-04-01", "score": 70},
+                    {"timestamp": "2024-04-02", "score": 50},
+                    {"timestamp": "2024-04-03", "score": 70},
+                    {"timestamp": "2024-04-04", "score": 85},
+                    {"timestamp": "2024-04-05", "score": 85},
+                    {"timestamp": "2024-04-06", "score": 55},
+                    {"timestamp": "2024-04-07", "score": 80},
+                    {"timestamp": "2024-04-08", "score": 70},
+                    {"timestamp": "2024-04-09", "score": 60},
+                    {"timestamp": "2024-04-10", "score": 85},
+                    {"timestamp": "2024-04-11", "score": 60},
+                    {"timestamp": "2024-04-12", "score": 75},
+                    {"timestamp": "2024-04-13", "score": 70},
+                    {"timestamp": "2024-04-14", "score": 50},
+                    {"timestamp": "2024-04-15", "score": 75},
+                    {"timestamp": "2024-04-16", "score": 85},
+                    {"timestamp": "2024-04-17", "score": 75},
+                    {"timestamp": "2024-04-18", "score": 85},
+                    {"timestamp": "2024-04-19", "score": 75},
+                    {"timestamp": "2024-04-22", "score": 70},
+                    {"timestamp": "2024-04-24", "score": 75},
+                    {"timestamp": "2024-04-25", "score": 60},
+                    {"timestamp": "2024-04-27", "score": 85},
+                    {"timestamp": "2024-04-28", "score": 85}
+                ]
+            }
+        }
+    ]
+}
