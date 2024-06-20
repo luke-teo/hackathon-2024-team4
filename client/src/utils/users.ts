@@ -15,7 +15,7 @@ export const users: User[] = [
     },
     {
         id: 3,
-        name: "Evan de Graff",
+        name: "Evan de Graaff",
         avatarUrl:
             "https://stg-dashboard.colorkrew-id.com/avatar/a-61f52c12-aab1-4a08-b4d2-259fc9c239a7-e430c9de-119f-471a-8602-89adea73dcee?sv=2017-11-09&sr=b&st=2024-06-20T07:55:12Z&se=2024-06-20T08:20:12Z&sp=r&spr=https&sig=ZKy%2BbmBQ0DMBYAZpZG1ZwnFAJEN8uBJesWg4szmlOsE%3D",
     },
@@ -38,3 +38,17 @@ export const users: User[] = [
             "https://stg-dashboard.colorkrew-id.com/avatar/a-61f52c12-aab1-4a08-b4d2-259fc9c239a7-48703220-d30b-4f78-8df4-e5bf0065fea5?sv=2017-11-09&sr=b&st=2024-06-20T07:56:52Z&se=2024-06-20T08:21:52Z&sp=r&spr=https&sig=GIqquxTHVWbI%2BJLtrSwUu4enhq8lTZV%2FOYEsReoVcBE%3D",
     },
 ];
+
+export const getUserInitials = (name: string): string => {
+    return name.split(" ")
+        .reduce((acc: string, cur, i, src) => {
+            if (i === 0) {
+                acc += cur[0];
+            }
+            if (i === src.length - 1) {
+                acc += cur[0];
+            }
+            return acc;
+        }, '')
+        .toUpperCase()
+}
