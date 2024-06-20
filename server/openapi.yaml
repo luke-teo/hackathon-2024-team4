@@ -1,0 +1,451 @@
+components:
+  schemas:
+    Review:
+      properties:
+        content:
+          type: string
+        id:
+          type: string
+        rating:
+          type: integer
+        user:
+          $ref: '#/components/schemas/User'
+      required:
+        - id
+      title: Review
+      type: object
+    Tenant:
+      properties:
+        createdAt:
+          format: date-time
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        shortCode:
+          maxLength: 5
+          minLength: 4
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+        userCount:
+          type: integer
+      required:
+        - id
+        - name
+        - shortCode
+      title: Tenant
+      type: object
+      x-examples:
+        Tenant A:
+          createdAt: '2019-08-24T14:15:22Z'
+          id: '123'
+          name: Tenant A
+          shortCode: ck01
+          updatedAt: '2019-08-24T14:15:22Z'
+    TenantCreateValidationError:
+      properties:
+        name:
+          properties:
+            maxLen:
+              type: string
+            minLen:
+              type: string
+            required:
+              type: string
+            uniqueName:
+              type: string
+          type: object
+        shortCode:
+          properties:
+            alphaNum:
+              type: string
+            maxLen:
+              type: string
+            minLen:
+              type: string
+            required:
+              type: string
+            uniqueShortCode:
+              type: string
+          type: object
+      title: TenantCreateValidationError
+      type: object
+    User:
+      properties:
+        email:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+        tenant:
+          $ref: '#/components/schemas/Tenant'
+      required:
+        - id
+      title: User
+      type: object
+    UserCreateValidationError:
+      properties:
+        email:
+          properties:
+            email:
+              type: string
+            maxLen:
+              type: string
+            required:
+              type: string
+          type: object
+        name:
+          properties:
+            maxLen:
+              type: string
+            minLen:
+              type: string
+            required:
+              type: string
+          type: object
+        role:
+          properties:
+            invalidRole:
+              type: string
+          type: object
+        tenantId:
+          properties:
+            tenantExists:
+              type: string
+          type: object
+      title: UserCreateValidationError
+      type: object
+    Department:
+      title: Department
+      x-stoplight:
+        id: nx70gznwo6i4t
+      type: object
+      properties:
+        id:
+          type: string
+          x-stoplight:
+            id: zy7lmqwmg4rrs
+        custom_id:
+          type: string
+          x-stoplight:
+            id: 90z7up0m2uc51
+        name:
+          type: string
+          x-stoplight:
+            id: rqhd6cuwgskpq
+        hierarchy:
+          type: array
+          x-stoplight:
+            id: 05dv63n3yobt6
+          items:
+            $ref: '#/components/schemas/Department'
+      required:
+        - id
+        - custom_id
+        - name
+        - hierarchy
+  securitySchemes: {}
+info:
+  description: Test API
+  title: v1-3.0
+  version: '1.0'
+openapi: 3.0.0
+paths:
+  /api/v1/tenant:
+    get:
+      description: List all tenants in the application
+      operationId: get-api-v1-tenant
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  tenants:
+                    items:
+                      $ref: '#/components/schemas/Tenant'
+                    type: array
+                required:
+                  - tenants
+                type: object
+          description: OK
+      summary: ''
+    parameters: []
+    post:
+      description: Creates a new tenant
+      operationId: post-api-v1-tenant
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  type: string
+                shortCode:
+                  maxLength: 5
+                  minLength: 4
+                  type: string
+              required:
+                - name
+                - shortCode
+              type: object
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  tenant:
+                    $ref: '#/components/schemas/Tenant'
+                required:
+                  - tenant
+                type: object
+          description: OK
+        '400':
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    $ref: '#/components/schemas/TenantCreateValidationError'
+                  errorCode:
+                    type: string
+                  errorMessage:
+                    type: string
+                required:
+                  - errorCode
+                  - errorMessage
+                  - data
+                type: object
+          description: Bad Request
+      summary: ''
+  '/api/v1/tenant/{tenantId}':
+    get:
+      description: Get details for 1 tenant
+      operationId: get-api-v1-tenant-tenantId
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  tenant:
+                    $ref: '#/components/schemas/Tenant'
+                required:
+                  - tenant
+                type: object
+          description: OK
+        '404':
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+                type: object
+          description: Not Found
+      summary: Get Tenant By ID
+      tags: []
+    parameters:
+      - in: path
+        name: tenantId
+        required: true
+        schema:
+          type: string
+    patch:
+      operationId: patch-api-v1-tenant-tenantId
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  type: string
+                tenantId:
+                  type: string
+              required:
+                - name
+                - tenantId
+              type: object
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  tenant:
+                    $ref: '#/components/schemas/Tenant'
+                type: object
+          description: OK
+      summary: ''
+  /api/v1/user:
+    get:
+      description: List all users for a tenant
+      operationId: get-api-v1-user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                tenantId:
+                  type: string
+              required:
+                - tenantId
+              type: object
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  users:
+                    items:
+                      $ref: '#/components/schemas/User'
+                    type: array
+                required:
+                  - users
+                type: object
+          description: OK
+      summary: Get all users
+      tags: []
+    post:
+      description: ''
+      operationId: post-api-v1-user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                email:
+                  type: string
+                name:
+                  nullable: true
+                  type: string
+                role:
+                  enum:
+                    - normal
+                    - admin
+                    - super
+                  type: string
+                tenantId:
+                  type: string
+              required:
+                - email
+                - name
+                - role
+                - tenantId
+              type: object
+      responses:
+        '200':
+          content:
+            application/json:
+              examples: {}
+              schema:
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                required:
+                  - user
+                type: object
+          description: OK
+        '400':
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    $ref: '#/components/schemas/UserCreateValidationError'
+                  errorCode:
+                    type: string
+                  errorMessage:
+                    type: string
+                required:
+                  - errorCode
+                  - errorMessage
+                  - data
+                type: object
+          description: Bad Request
+      summary: ''
+  '/api/v1/user/{userId}':
+    get:
+      description: Gets a single user with their tenant
+      operationId: get-api-v1-user-userId
+      requestBody:
+        content: {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+                required:
+                  - user
+                type: object
+          description: OK
+        '404':
+          content:
+            application/json:
+              schema:
+                properties:
+                  message:
+                    type: string
+                required:
+                  - message
+                type: object
+          description: Not Found
+      summary: Get User By ID
+      tags: []
+    parameters:
+      - in: path
+        name: userId
+        required: true
+        schema:
+          type: string
+  /api/v1/department:
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  departments:
+                    type: array
+                    x-stoplight:
+                      id: cbdz9scvdyruq
+                    items:
+                      $ref: '#/components/schemas/Department'
+                required:
+                  - departments
+      operationId: get-api-v1-department
+      description: ''
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                search:
+                  type: string
+                  x-stoplight:
+                    id: y5xsk1nplcy9n
+                  nullable: true
+              required:
+                - search
+servers:
+  - url: 'http://localhost:3000'
+

@@ -1,0 +1,29 @@
+# Version of docker-compose
+version: '3'
+
+services:
+  db:
+    # Azure Database for PostgreSQL latest supported version
+    # https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-supported-versions
+    image: postgres:16.2
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: go_chi_template
+      PGDATA: /var/lib/postgresql/data/pgdata
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  redis:
+    # Azure Cache latest supported version
+    # https://learn.microsoft.com/en-us/azure/azure-cache-for-redis/cache-whats-new
+    image: redis:6.0 
+    ports:
+      - "6379:6379"
+    restart: always
+
+volumes:
+  db_data:
