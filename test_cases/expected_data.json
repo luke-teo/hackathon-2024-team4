@@ -1,0 +1,38 @@
+{
+    "result":[
+        {
+            "1":{
+                "data":[
+                    {
+                        "timestamp":"2024-05-01",
+                        "score": 50
+                    },
+                    {
+                        "timestamp":"2024-05-03",
+                        "score": 20
+                    },
+                    {
+                        "timestamp":"2024-05-03",
+                        "score": 70
+                    }
+                ]
+            },
+            "2":{
+                "data":[
+                    {
+                        "timestamp":"2024-05-02",
+                        "score": 50
+                    },
+                    {
+                        "timestamp":"2024-05-03",
+                        "score": 55
+                    },
+                    {
+                        "timestamp":"2024-05-03",
+                        "score": 21
+                    }
+                ]
+            }
+        }
+    ]
+}
