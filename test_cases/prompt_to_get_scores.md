@@ -1,5 +1,5 @@
 # Prompts to score messages
-Rate each uuid's message sent later from 0-100 based on the following condition.
+Rate each userId's message sent later from 0-100 based on the following condition.
 The following conditions should largely impact on scores.
 
 You are tasked with rating the messages based on the attitude they convey. Use the following criteria to determine if a message is positive, neutral, or negative.
@@ -64,61 +64,19 @@ Use these guidelines to consistently rate the messages based on their conveyed a
 
 
 
-Output format:
+Output format in JSON:
 
-- uuid represent who send the messages
+- userId represent who send the messages
 - score: message score
 ```json
 {
     "result":[
         {
-            "uuid":{
-                "data":[
-                {
-                    "timestamp":"yyyy-mm-dd",
-                    "score": 11
-                }
-                ]
-            }
-        }
-    ]
-}
-```
-
-- example
-```json
-{
-    "result":[
-        {
-            "1":{
-                "data":[
+            "userId":{
+            "data":[
                     {
-                        "timestamp":"2024-05-01",
-                        "score": 50
-                    },
-                    {
-                        "timestamp":"2024-05-03",
-                        "score": 20
-                    },
-                    {
-                        "timestamp":"2024-05-03",
-                        "score": 70
-                    }
-                ]
-            },
-            "2":{
-                "data":[
-                    {
-                        "timestamp":"2024-05-02",
-                        "score": 50
-                    },
-                    {
-                        "timestamp":"2024-05-03",
-                        "score": 55
-                    },
-                    {
-                        "timestamp":"2024-05-03",
-                        "score": 21
+                        "timestamp":"yyyy-mm-dd",
+                        "score": 11
                     }
                 ]
             }
