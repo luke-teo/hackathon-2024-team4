@@ -8,7 +8,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { users } from "../../utils/users";
+import { getUserInitials, users } from "../../utils/users";
 import { type MouseEvent, useContext, useState } from "react";
 import { SelectedUserContext } from "../context/SelectedUserContext";
 import SearchIcon from "@mui/icons-material/Search";
@@ -79,11 +79,7 @@ export const UserSideMenu = () => {
               {...props}
             >
               <Avatar src={option.avatarUrl}>
-                {option.name
-                  .split(" ")
-                  .map((part) => part[0])
-                  .join("")
-                  .toUpperCase()}
+                {getUserInitials(option.name)}
               </Avatar>
               <Typography>{option.name}</Typography>
             </Box>
@@ -155,11 +151,7 @@ export const UserSideMenu = () => {
                   }}
                 >
                   <Avatar src={u.avatarUrl}>
-                    {u.name
-                      .split(" ")
-                      .map((part) => part[0])
-                      .join("")
-                      .toUpperCase()}
+                    {getUserInitials(u.name)}
                   </Avatar>
                   <Typography
                     sx={{
