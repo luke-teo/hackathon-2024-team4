@@ -7,7 +7,7 @@ export const ScoreChart = () => {
         flex: 1,
       }}
     >
-      Right
+      hello this is the score chart
     </Box>
   );
 };
