@@ -56,7 +56,6 @@ export const LineChartComponent = ({ datetime }: Props) => {
 		datetime.month >= 4 &&
 		datetime.month <= currentMonth
 	) {
-		console.log("Data is empty and month is between May and the current month");
 		return (
 			<Box
 				sx={{
@@ -74,7 +73,6 @@ export const LineChartComponent = ({ datetime }: Props) => {
 
 	// Check if data is empty and the month is less than April
 	if (data.length < 1 && datetime.month < 4) {
-		console.log("Data is empty and month is less than April");
 		return (
 			<Box
 				sx={{
@@ -101,7 +99,6 @@ export const LineChartComponent = ({ datetime }: Props) => {
 
 	// Check if data is empty and the month is greater than the current month
 	if (data.length < 1 && datetime.month > currentMonth) {
-		console.log("Data is empty and month is in the future");
 		return (
 			<Box
 				sx={{
