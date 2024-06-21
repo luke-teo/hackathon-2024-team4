@@ -8,7 +8,7 @@ import {
 import { colors } from "../../utils/colors";
 import React, { useContext, useEffect } from "react";
 import { SelectedUserContext } from "../context/SelectedUserContext";
-import { HrNote } from "../../utils/types";
+import type { HrNote } from "../../utils/types";
 import { hrNotesMock } from "../../mock/hrNotesMock";
 
 export const FollowUp = (): JSX.Element => {
@@ -27,11 +27,11 @@ export const FollowUp = (): JSX.Element => {
         setHrNotes(hrNotesMock[i].notes);
       }
     }
-  }, [selectedUser, setHrNotes]);
+  }, [selectedUser]);
 
   useEffect(() => {
     notesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [hrNotes])
+  }, []);
 
   if (selectedUser === null) {
     return (
@@ -179,7 +179,7 @@ export const FollowUp = (): JSX.Element => {
               },
             ]);
 
-            setCurrentHrNote('')
+            setCurrentHrNote("");
           }}
         >
           Send
