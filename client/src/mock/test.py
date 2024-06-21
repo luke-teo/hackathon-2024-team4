@@ -41,5 +41,5 @@ score_data = generate_score_data()
 
 # Convert to JSON
 json_output = json.dumps(score_data, indent=2)
-with open('./output.json', 'w') as f:
+with open('../../public/mock.json', 'w') as f:
     json.dump(score_data, f, indent=2)
