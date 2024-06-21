@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"first_move/config"
@@ -18,8 +17,6 @@ func main() {
 	if len(os.Args[1:]) > 1 {
 		opts = os.Args[2:]
 	}
-
-	fmt.Println(opts)
 
 	app := config.NewApp()
 	c := console.NewConsole(app)

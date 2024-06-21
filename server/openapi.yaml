@@ -131,11 +131,11 @@ paths:
             schema:
               type: object
               properties:
-                filename:
-                  type: string
                 file:
                   type: string
                   format: binary
+              required:
+                - file
       responses:
         '200':
           description: OK

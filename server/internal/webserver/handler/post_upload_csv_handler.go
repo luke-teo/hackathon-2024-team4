@@ -2,12 +2,12 @@ package handler
 
 import (
 	"context"
-	"fmt"
 
 	"first_move/generated/oapi"
+	"first_move/internal/app/app_service"
 )
 
-func PostUploadCsv(
+func (h *Handler) PostUploadCsv(
 	ctx context.Context,
 	request oapi.PostUploadCsvRequestObject,
 ) (oapi.PostUploadCsvResponseObject, error) {
@@ -16,9 +16,7 @@ func PostUploadCsv(
 		return nil, err
 	}
 
-	for _, line := range f.Value {
-		fmt.Println(line)
-	}
+	err = app_service.ParseTextChatFromForm(ctx, h.app, f)
 
 	return nil, nil
 }

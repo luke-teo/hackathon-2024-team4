@@ -138,7 +138,7 @@ export const UserSideMenu = () => {
       </Box>
 
       {isUploadDialogOpen && (
-        <FileUploadDialog onClose={() => setIsUploadDialogOpen(false)} />
+        <FileUploadDialog closeDialog={() => setIsUploadDialogOpen(false)} />
       )}
     </Box>
   );
