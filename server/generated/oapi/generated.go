@@ -4,7 +4,6 @@
 package oapi
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
@@ -43,9 +42,6 @@ type N500Error struct {
 	ErrorMessage string                  `json:"errorMessage"`
 }
 
-// GetScoresByUserIDJSONBody defines parameters for GetScoresByUserID.
-type GetScoresByUserIDJSONBody interface{}
-
 // GetScoresByUserIDParams defines parameters for GetScoresByUserID.
 type GetScoresByUserIDParams struct {
 	// StartDate Start date
@@ -57,12 +53,8 @@ type GetScoresByUserIDParams struct {
 
 // PostUploadCsvMultipartBody defines parameters for PostUploadCsv.
 type PostUploadCsvMultipartBody struct {
-	File     *openapi_types.File `json:"file,omitempty"`
-	Filename *string             `json:"filename,omitempty"`
+	File openapi_types.File `json:"file"`
 }
-
-// GetScoresByUserIDJSONRequestBody defines body for GetScoresByUserID for application/json ContentType.
-type GetScoresByUserIDJSONRequestBody GetScoresByUserIDJSONBody
 
 // PostUploadCsvMultipartRequestBody defines body for PostUploadCsv for multipart/form-data ContentType.
 type PostUploadCsvMultipartRequestBody PostUploadCsvMultipartBody
@@ -140,29 +132,15 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 
 // The interface specification for the client above.
 type ClientInterface interface {
-	// GetScoresByUserIDWithBody request with any body
-	GetScoresByUserIDWithBody(ctx context.Context, userId string, params *GetScoresByUserIDParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	GetScoresByUserID(ctx context.Context, userId string, params *GetScoresByUserIDParams, body GetScoresByUserIDJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// GetScoresByUserID request
+	GetScoresByUserID(ctx context.Context, userId string, params *GetScoresByUserIDParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// PostUploadCsvWithBody request with any body
 	PostUploadCsvWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
-func (c *Client) GetScoresByUserIDWithBody(ctx context.Context, userId string, params *GetScoresByUserIDParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetScoresByUserIDRequestWithBody(c.Server, userId, params, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetScoresByUserID(ctx context.Context, userId string, params *GetScoresByUserIDParams, body GetScoresByUserIDJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetScoresByUserIDRequest(c.Server, userId, params, body)
+func (c *Client) GetScoresByUserID(ctx context.Context, userId string, params *GetScoresByUserIDParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetScoresByUserIDRequest(c.Server, userId, params)
 	if err != nil {
 		return nil, err
 	}
@@ -185,19 +163,8 @@ func (c *Client) PostUploadCsvWithBody(ctx context.Context, contentType string, 
 	return c.Client.Do(req)
 }
 
-// NewGetScoresByUserIDRequest calls the generic GetScoresByUserID builder with application/json body
-func NewGetScoresByUserIDRequest(server string, userId string, params *GetScoresByUserIDParams, body GetScoresByUserIDJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewGetScoresByUserIDRequestWithBody(server, userId, params, "application/json", bodyReader)
-}
-
-// NewGetScoresByUserIDRequestWithBody generates requests for GetScoresByUserID with any type of body
-func NewGetScoresByUserIDRequestWithBody(server string, userId string, params *GetScoresByUserIDParams, contentType string, body io.Reader) (*http.Request, error) {
+// NewGetScoresByUserIDRequest generates requests for GetScoresByUserID
+func NewGetScoresByUserIDRequest(server string, userId string, params *GetScoresByUserIDParams) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -252,12 +219,10 @@ func NewGetScoresByUserIDRequestWithBody(server string, userId string, params *G
 		queryURL.RawQuery = queryValues.Encode()
 	}
 
-	req, err := http.NewRequest("GET", queryURL.String(), body)
+	req, err := http.NewRequest("GET", queryURL.String(), nil)
 	if err != nil {
 		return nil, err
 	}
-
-	req.Header.Add("Content-Type", contentType)
 
 	return req, nil
 }
@@ -334,10 +299,8 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
-	// GetScoresByUserIDWithBodyWithResponse request with any body
-	GetScoresByUserIDWithBodyWithResponse(ctx context.Context, userId string, params *GetScoresByUserIDParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*GetScoresByUserIDResponse, error)
-
-	GetScoresByUserIDWithResponse(ctx context.Context, userId string, params *GetScoresByUserIDParams, body GetScoresByUserIDJSONRequestBody, reqEditors ...RequestEditorFn) (*GetScoresByUserIDResponse, error)
+	// GetScoresByUserIDWithResponse request
+	GetScoresByUserIDWithResponse(ctx context.Context, userId string, params *GetScoresByUserIDParams, reqEditors ...RequestEditorFn) (*GetScoresByUserIDResponse, error)
 
 	// PostUploadCsvWithBodyWithResponse request with any body
 	PostUploadCsvWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostUploadCsvResponse, error)
@@ -393,17 +356,9 @@ func (r PostUploadCsvResponse) StatusCode() int {
 	return 0
 }
 
-// GetScoresByUserIDWithBodyWithResponse request with arbitrary body returning *GetScoresByUserIDResponse
-func (c *ClientWithResponses) GetScoresByUserIDWithBodyWithResponse(ctx context.Context, userId string, params *GetScoresByUserIDParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*GetScoresByUserIDResponse, error) {
-	rsp, err := c.GetScoresByUserIDWithBody(ctx, userId, params, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetScoresByUserIDResponse(rsp)
-}
-
-func (c *ClientWithResponses) GetScoresByUserIDWithResponse(ctx context.Context, userId string, params *GetScoresByUserIDParams, body GetScoresByUserIDJSONRequestBody, reqEditors ...RequestEditorFn) (*GetScoresByUserIDResponse, error) {
-	rsp, err := c.GetScoresByUserID(ctx, userId, params, body, reqEditors...)
+// GetScoresByUserIDWithResponse request returning *GetScoresByUserIDResponse
+func (c *ClientWithResponses) GetScoresByUserIDWithResponse(ctx context.Context, userId string, params *GetScoresByUserIDParams, reqEditors ...RequestEditorFn) (*GetScoresByUserIDResponse, error) {
+	rsp, err := c.GetScoresByUserID(ctx, userId, params, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
@@ -740,7 +695,6 @@ type N500ErrorJSONResponse struct {
 type GetScoresByUserIDRequestObject struct {
 	UserId string `json:"userId"`
 	Params GetScoresByUserIDParams
-	Body   *GetScoresByUserIDJSONRequestBody
 }
 
 type GetScoresByUserIDResponseObject interface {
@@ -856,13 +810,6 @@ func (sh *strictHandler) GetScoresByUserID(w http.ResponseWriter, r *http.Reques
 
 	request.UserId = userId
 	request.Params = params
-
-	var body GetScoresByUserIDJSONRequestBody
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
-		return
-	}
-	request.Body = &body
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
 		return sh.ssi.GetScoresByUserID(ctx, request.(GetScoresByUserIDRequestObject))

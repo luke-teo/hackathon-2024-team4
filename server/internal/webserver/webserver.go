@@ -31,14 +31,21 @@ func NewWebserver(app *config.App) *Webserver {
 	r.Use(middleware.NewLoggerMiddleware(app.Logger()))
 	r.Use(chimiddleware.Recoverer)
 
-	baseURL := "/api"
-	serverOptions := oapi.StrictHTTPServerOptions{}
-	strictHandler := oapi.NewStrictHandlerWithOptions(
-		handler,
-		[]oapi.StrictMiddlewareFunc{},
-		serverOptions,
-	)
-	oapi.HandlerFromMuxWithBaseURL(strictHandler, r, baseURL)
+	r.Group(func(r chi.Router) {
+		baseURL := "/api"
+		serverOptions := oapi.StrictHTTPServerOptions{
+			RequestErrorHandlerFunc: func(w http.ResponseWriter, r *http.Request, err error) {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+			},
+		}
+		strictHandler := oapi.NewStrictHandlerWithOptions(
+			handler,
+			[]oapi.StrictMiddlewareFunc{},
+			serverOptions,
+		)
+		oapi.HandlerFromMuxWithBaseURL(strictHandler, r, baseURL)
+	})
+
 	return &Webserver{
 		router:     r,
 		serverAddr: serverAddr,

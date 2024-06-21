@@ -1,35 +1,46 @@
 import { AttachFile } from "@mui/icons-material";
 import { Box, Button, Dialog, Typography } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
 import { MuiFileInput } from "mui-file-input";
 import { useState } from "react";
-import { usePostUploadCsvMutation } from "../../services/api/v1";
 
 type Props = {
-  onClose: (e: React.MouseEvent) => void;
+  closeDialog: () => void;
 };
 
-export const FileUploadDialog = ({ onClose }: Props): JSX.Element => {
+export const FileUploadDialog = ({ closeDialog }: Props): JSX.Element => {
   const [file, setFile] = useState<File | null>(null);
-
-  const [postUploadFile, postUploadFileRes] = usePostUploadCsvMutation();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleFileChange = (newFile: File | null): void => {
     setFile(newFile);
   };
 
   const handleUploadFile = (): void => {
-    postUploadFile({
-      body: {
-        filename: file?.name,
-        file: file ?? undefined,
+    if (!file) {
+      return;
+    }
+
+    setIsLoading(true);
+
+    const data = new FormData();
+    data.append("file", file);
+
+    fetch("/api/upload_csv", {
+      body: data,
+      method: "POST",
+      headers: {
+        contentType: "multipart/form-data",
       },
-    })
-      .unwrap()
-      .then((resp) => console.log(resp));
+    }).then((resp) => {
+      console.log(resp);
+      setIsLoading(false);
+      closeDialog();
+    });
   };
 
   return (
-    <Dialog open={true} onClose={onClose}>
+    <Dialog open={true} onClose={() => closeDialog()}>
       <Box
         sx={{
           display: "flex",
@@ -63,16 +74,21 @@ export const FileUploadDialog = ({ onClose }: Props): JSX.Element => {
             gap: "8px",
           }}
         >
-          <Button variant="outlined" color="inherit" onClick={onClose}>
+          <Button
+            variant="outlined"
+            color="inherit"
+            onClick={() => closeDialog()}
+          >
             Cancel
           </Button>
-          <Button
+          <LoadingButton
+            loading={isLoading}
             variant="contained"
             onClick={handleUploadFile}
             sx={{ backgroundColor: "#9C72ED" }}
           >
             Upload
-          </Button>
+          </LoadingButton>
         </Box>
       </Box>
     </Dialog>
