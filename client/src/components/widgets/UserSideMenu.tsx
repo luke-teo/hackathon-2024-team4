@@ -2,6 +2,8 @@ import {
   Autocomplete,
   Avatar,
   Box,
+  Chip,
+  CircularProgress,
   IconButton,
   InputAdornment,
   ListItem,
@@ -9,17 +11,53 @@ import {
   Typography,
 } from "@mui/material";
 import { getUserInitials, users } from "../../utils/users";
-import { type MouseEvent, useContext, useState } from "react";
+import React, { type MouseEvent, useContext, useState } from "react";
 import { SelectedUserContext } from "../context/SelectedUserContext";
 import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
 import PersonIcon from "@mui/icons-material/Person";
 import { colors } from "../../utils/colors";
 import type { User } from "../../utils/types";
+import { mock } from "../../mock/mock";
+
+const UserAvatar = ({ avatarUrl, name }: { avatarUrl: string, name: string }) => {
+  return (
+    <Avatar
+      src={avatarUrl}
+      sx={{
+        backgroundColor: '#E3F7E8',
+        color: '#00871D'
+      }}
+    >
+      {getUserInitials(name)}
+    </Avatar>
+  );
+}
+
+type UserStatus = { userId: number, zScore: number };
+
+const getZScore = (usersStatus: UserStatus[], userId: number): number => {
+  return usersStatus.find(e => e.userId === userId)?.zScore ?? 0;
+}
 
 export const UserSideMenu = () => {
   const { selectedUser, setSelectedUser } = useContext(SelectedUserContext);
   const [value, setValue] = useState<User | null>(null);
+  const [usersStatus, setUsersStatus] = useState<UserStatus[] | undefined>(undefined)
+
+
+  React.useEffect(() => {
+    const usersStatusCalc: UserStatus[] = [];
+
+    for (let j = 0; j < mock.length; j++) {
+      usersStatusCalc.push({
+        userId: Number(mock[j].userId),
+        zScore: mock[j].scores[mock[j].scores.length - 1].zScore
+      });
+    }
+
+    setUsersStatus(usersStatusCalc);
+  });
 
   const handleSelectUser = (u: User) => {
     setSelectedUser(u);
@@ -31,6 +69,23 @@ export const UserSideMenu = () => {
     setSelectedUser(null);
     setValue(null);
   };
+
+  if (usersStatus === undefined) {
+    return (
+      <Box
+        sx={{
+          alignItems: "center",
+          background: colors.BackgroundBaseWhite,
+          borderRadius: 2,
+          display: "flex",
+          justifyContent: "center",
+          p: 2,
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
     <Box
@@ -78,9 +133,11 @@ export const UserSideMenu = () => {
               component="li"
               {...props}
             >
-              <Avatar src={option.avatarUrl}>
-                {getUserInitials(option.name)}
-              </Avatar>
+              <UserAvatar
+                avatarUrl={option.avatarUrl}
+                name={option.name}
+              />
+
               <Typography>{option.name}</Typography>
             </Box>
           )}
@@ -150,9 +207,11 @@ export const UserSideMenu = () => {
                     gap: 1,
                   }}
                 >
-                  <Avatar src={u.avatarUrl}>
-                    {getUserInitials(u.name)}
-                  </Avatar>
+                  <UserAvatar
+                    avatarUrl={u.avatarUrl}
+                    name={u.name}
+                  />
+
                   <Typography
                     sx={{
                       fontSize: 14,
@@ -161,6 +220,18 @@ export const UserSideMenu = () => {
                   >
                     {u.name}
                   </Typography>
+
+                  {getZScore(usersStatus, u.id) <= 2 ? <></> : getZScore(usersStatus, u.id) > 3 ? <Chip
+                    color="error"
+                    label="Required"
+                    size="small"
+                    variant="outlined"
+                  /> : <Chip
+                    color="warning"
+                    label="Review"
+                    size="small"
+                    variant="outlined"
+                  />}
                 </Box>
               </Box>
             </ListItem>
