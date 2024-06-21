@@ -9,16 +9,30 @@ import {
 	ComposedChart,
 } from "recharts";
 import { DateTime } from "luxon";
-import type { Score } from "../services/api/v1";
-import { Box, Typography } from "@mui/material";
+import { useGetScoresByUserIdQuery } from "../services/api/v1";
+import { Box, CircularProgress, Typography } from "@mui/material";
 import { colors } from "../utils/colors";
+import { useContext } from "react";
+import { SelectedUserContext } from "./context/SelectedUserContext";
 
 type Props = {
 	datetime: DateTime;
-	scores: Score[];
 };
 
-export const LineChartComponent = ({ datetime, scores }: Props) => {
+export const LineChartComponent = ({ datetime }: Props) => {
+	const { selectedUser } = useContext(SelectedUserContext);
+	const start = datetime.startOf("month");
+	const end = datetime.endOf("month");
+	const userId = selectedUser?.id.toString() ?? "";
+
+	const { data: getUserScores } = useGetScoresByUserIdQuery({
+		userId: userId,
+		startDate: start.toISODate() ?? "",
+		endDate: end.toISODate() ?? "",
+	});
+
+	const scores = getUserScores?.scores ?? [];
+
 	const relevantScores = scores.filter(
 		(s) =>
 			DateTime.fromISO(s.date).month === datetime.month &&
@@ -30,12 +44,34 @@ export const LineChartComponent = ({ datetime, scores }: Props) => {
 		score: s.currentScore,
 		mean: s.mean,
 		stdRange: [
-			s.currentScore - s.standardDeviation,
-			s.currentScore + s.standardDeviation,
+			s.mean - s.standardDeviation * 2,
+			s.mean + s.standardDeviation * 2,
 		],
 	}));
 
-	if (data.length < 1) {
+	if (
+		(data.length < 1 && datetime.month > 4) ||
+		(data.length < 1 && datetime.month < DateTime.now().month)
+	) {
+		return (
+			<Box
+				sx={{
+					height: "100%",
+					width: "100%",
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+				}}
+			>
+				<CircularProgress />
+			</Box>
+		);
+	}
+
+	if (
+		(data.length < 1 && datetime.month < 4) ||
+		(data.length < 1 && datetime.month > DateTime.now().month)
+	) {
 		return (
 			<Box
 				sx={{

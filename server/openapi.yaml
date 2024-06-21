@@ -98,9 +98,6 @@ paths:
           schema:
             type: string
             format: date
-      requestBody:
-        content:
-          application/json: {}
       responses:
         '200':
           description: OK

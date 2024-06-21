@@ -1,31 +1,27 @@
 import { TrendingDown, TrendingFlat, TrendingUp } from "@mui/icons-material";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import { colors } from "../../utils/colors";
-import React, { useContext, useEffect } from "react";
-import { mock } from "../../mock/mock";
+import { useContext } from "react";
 import { SelectedUserContext } from "../context/SelectedUserContext";
+import { DateTime } from "luxon";
+import { useGetScoresByUserIdQuery } from "../../services/api/v1";
 
 export const BehaviorScore = (): JSX.Element => {
   const { selectedUser } = useContext(SelectedUserContext);
-  const [userZScore, setUserZScore] = React.useState<number | undefined>(
-    undefined,
-  );
 
-  useEffect(() => {
-    if (selectedUser === undefined) {
-      setUserZScore(undefined);
-    }
+  const now = DateTime.now();
+  const start = now.startOf("month");
+  const end = now.endOf("month");
 
-    const userScoreMock = mock;
+  const { data: getUserScores } = useGetScoresByUserIdQuery({
+    userId: selectedUser?.id.toString() ?? "",
+    startDate: start.toISODate() ?? "",
+    endDate: end.toISODate() ?? "",
+  });
 
-    for (let i = 0; i < userScoreMock.length; i++) {
-      if (Number(userScoreMock[i].userId) === selectedUser?.id) {
-        setUserZScore(
-          userScoreMock[i].scores[userScoreMock[i].scores.length - 1].zScore,
-        );
-      }
-    }
-  }, [selectedUser, setUserZScore]);
+  const scores = getUserScores?.scores;
+  const latestScore =
+    scores && scores.length > 1 ? scores[scores.length - 1] : null;
 
   if (selectedUser === null) {
     return (
@@ -46,7 +42,7 @@ export const BehaviorScore = (): JSX.Element => {
     );
   }
 
-  if (userZScore === undefined) {
+  if (!latestScore) {
     return (
       <Box
         sx={{
@@ -93,13 +89,13 @@ export const BehaviorScore = (): JSX.Element => {
           Behavior score
         </Typography>
 
-        {userZScore <= 2 ? (
+        {latestScore.zScore <= 2 ? (
           <TrendingUp
             sx={{
               color: colors.TextForegroundSuccess,
             }}
           />
-        ) : userZScore > 3 ? (
+        ) : latestScore.zScore > 3 ? (
           <TrendingDown
             sx={{
               color: colors.TextForegroundDanger,
@@ -139,15 +135,15 @@ export const BehaviorScore = (): JSX.Element => {
             sx={{
               fontSize: 72,
               color:
-                userZScore <= 2
+                latestScore.zScore <= 2
                   ? colors.TextForegroundSuccess
-                  : userZScore > 3
+                  : latestScore.zScore > 3
                     ? colors.TextForegroundDanger
                     : colors.TextForegroundWarning,
               fontWeight: "bold",
             }}
           >
-            {userZScore <= 2 ? "A" : userZScore > 3 ? "C" : "B"}
+            {latestScore.zScore <= 2 ? "A" : latestScore.zScore > 3 ? "C" : "B"}
           </Typography>
         </Box>
       </Box>
@@ -167,9 +163,9 @@ export const BehaviorScore = (): JSX.Element => {
             color: colors.TextForegroundLow,
           }}
         >
-          {userZScore <= 2
+          {latestScore.zScore <= 2
             ? "This person is doing well."
-            : userZScore > 3
+            : latestScore.zScore > 3
               ? "This person's performance is worrisome."
               : "This person requires some attention."}
         </Typography>
