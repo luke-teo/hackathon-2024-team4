@@ -49,10 +49,14 @@ export const LineChartComponent = ({ datetime }: Props) => {
 		],
 	}));
 
+	const currentMonth = DateTime.now().month;
+	// Check if data is empty and the month is between May and the current month
 	if (
-		(data.length < 1 && datetime.month > 4) ||
-		(data.length < 1 && datetime.month < DateTime.now().month)
+		data.length < 1 &&
+		datetime.month >= 4 &&
+		datetime.month <= currentMonth
 	) {
+		console.log("Data is empty and month is between May and the current month");
 		return (
 			<Box
 				sx={{
@@ -68,10 +72,9 @@ export const LineChartComponent = ({ datetime }: Props) => {
 		);
 	}
 
-	if (
-		(data.length < 1 && datetime.month < 4) ||
-		(data.length < 1 && datetime.month > DateTime.now().month)
-	) {
+	// Check if data is empty and the month is less than April
+	if (data.length < 1 && datetime.month < 4) {
+		console.log("Data is empty and month is less than April");
 		return (
 			<Box
 				sx={{
@@ -82,6 +85,7 @@ export const LineChartComponent = ({ datetime }: Props) => {
 					justifyContent: "center",
 				}}
 			>
+				{/* Handle this case if needed */}
 				<Typography
 					sx={{
 						color: colors.TextForegroundLow,
@@ -89,7 +93,34 @@ export const LineChartComponent = ({ datetime }: Props) => {
 						fontWeight: "bold",
 					}}
 				>
-					No Data is Available for this Period
+					No Data Available Before April
+				</Typography>
+			</Box>
+		);
+	}
+
+	// Check if data is empty and the month is greater than the current month
+	if (data.length < 1 && datetime.month > currentMonth) {
+		console.log("Data is empty and month is in the future");
+		return (
+			<Box
+				sx={{
+					height: "100%",
+					width: "100%",
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+				}}
+			>
+				{/* Handle this case if needed */}
+				<Typography
+					sx={{
+						color: colors.TextForegroundLow,
+						fontSize: 16,
+						fontWeight: "bold",
+					}}
+				>
+					No Data Available for Future Dates
 				</Typography>
 			</Box>
 		);
