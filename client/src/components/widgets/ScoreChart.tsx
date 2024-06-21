@@ -2,7 +2,7 @@ import { Box, Button, Typography } from "@mui/material";
 import { colors } from "../../utils/colors";
 import { useContext, useState } from "react";
 import { SelectedUserContext } from "../context/SelectedUserContext";
-import { DateTime, type MonthNumbers } from "luxon";
+import { DateTime } from "luxon";
 import { mock } from "../../mock/mock";
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 import { LineChartComponent } from "../LineChartComponent";
@@ -138,7 +138,7 @@ export const ScoreChart = () => {
 					overflow: "hidden",
 				}}
 			>
-				<Box sx={{ flexShrink: 0, width: "100%" }}>
+				<Box sx={{ flex: 0, width: "100%" }}>
 					<Typography
 						sx={{
 							fontWeight: "bold",

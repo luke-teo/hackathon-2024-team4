@@ -43,7 +43,7 @@ export const Layout = ({ children }: Props) => {
                 component="main"
                 sx={{
                     flex: 1,
-                    height: "100%",
+                    height: "calc(100% - 82px - 16px)",
                     display: "flex",
                     gap: 4,
                     alignItems: "start",

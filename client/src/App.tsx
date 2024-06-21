@@ -13,14 +13,16 @@ function App() {
       <Layout>
         <UserSideMenu />
         <ScoreChart />
-        <Box sx={{
-          display: "flex",
-          flex: 0,
-          flexDirection: "column",
-          height: "calc(100% - 82px - 16px)",
-          gap: 2,
-          minWidth: 360
-        }}>
+        <Box
+          sx={{
+            display: "flex",
+            flex: 0,
+            flexDirection: "column",
+            gap: 2,
+            minWidth: 360,
+            height: "100%",
+          }}
+        >
           <BehaviorScore />
           <FollowUp />
         </Box>

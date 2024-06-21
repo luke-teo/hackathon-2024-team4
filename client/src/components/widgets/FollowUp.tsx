@@ -1,4 +1,10 @@
-import { Box, Button, CircularProgress, Input, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Input,
+  Typography,
+} from "@mui/material";
 import { colors } from "../../utils/colors";
 import React, { useContext, useEffect } from "react";
 import { SelectedUserContext } from "../context/SelectedUserContext";
@@ -8,7 +14,7 @@ import { hrNotesMock } from "../../mock/hrNotesMock";
 export const FollowUp = (): JSX.Element => {
   const { selectedUser } = useContext(SelectedUserContext);
   const [hrNotes, setHrNotes] = React.useState<HrNote[] | undefined>(undefined);
-  const [currentHrNote, setCurrentHrNote] = React.useState<string>('');
+  const [currentHrNote, setCurrentHrNote] = React.useState<string>("");
 
   useEffect(() => {
     if (selectedUser === undefined) {
@@ -38,7 +44,7 @@ export const FollowUp = (): JSX.Element => {
           No user selected
         </Typography>
       </Box>
-    )
+    );
   }
 
   if (hrNotes === undefined) {
@@ -92,58 +98,85 @@ export const FollowUp = (): JSX.Element => {
         </Typography>
       </Box>
 
-
-      <Box sx={{
-        display: "flex",
-        flexDirection: "column",
-        overflowX: "hidden",
-        overflowY: "scroll",
-        flex: 0,
-        gap: 2,
-        p: 2,
-        backgroundColor: colors.BackgroundHighlight,
-      }}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          overflowX: "hidden",
+          overflowY: "scroll",
+          flex: 0,
+          gap: 2,
+          p: 2,
+          backgroundColor: colors.BackgroundHighlight,
+        }}
+      >
         {hrNotes.map((note, index) => (
-          <Box key={index} sx={{
-            backgroundColor: colors.BackgroundBaseWhite,
-            borderRadius: 2,
-            display: "flex",
-            flexDirection: "column",
-            gap: 1,
-            justifyContent: "space-between",
-            p: 2,
-          }}>
+          <Box
+            key={index}
+            sx={{
+              backgroundColor: colors.BackgroundBaseWhite,
+              borderRadius: 2,
+              display: "flex",
+              flexDirection: "column",
+              gap: 1,
+              justifyContent: "space-between",
+              p: 2,
+            }}
+          >
             <Typography>{note.body}</Typography>
-            <Typography sx={{
-              fontSize: 12,
-            }}>{(new Date(note.timestamp * 1000)).toISOString().slice(0, 16).replace('T', ' ').replace(/-/g, '/')}</Typography>
-          </Box>))}
+            <Typography
+              sx={{
+                fontSize: 12,
+              }}
+            >
+              {new Date(note.timestamp * 1000)
+                .toISOString()
+                .slice(0, 16)
+                .replace("T", " ")
+                .replace(/-/g, "/")}
+            </Typography>
+          </Box>
+        ))}
       </Box>
 
-      <Box sx={{
-        display: "flex",
-        borderTop: 1,
-        borderTopColor: colors.BorderBase,
-        gap: 2,
-        justifyContent: "center",
-        p: 2,
-      }}>
-        <Input minRows="3" maxRows="5" multiline sx={{
-          flex: 1,
-        }} value={currentHrNote} onChange={(e) => {
-          setCurrentHrNote(e.target.value);
-        }} />
+      <Box
+        sx={{
+          display: "flex",
+          borderTop: 1,
+          borderTopColor: colors.BorderBase,
+          gap: 2,
+          justifyContent: "center",
+          p: 2,
+        }}
+      >
+        <Input
+          minRows="3"
+          maxRows="5"
+          multiline
+          sx={{
+            flex: 1,
+          }}
+          value={currentHrNote}
+          onChange={(e) => {
+            setCurrentHrNote(e.target.value);
+          }}
+        />
 
-        <Button variant="outlined" onClick={() => {
-          setHrNotes([
-            ...hrNotes,
-            {
-              body: currentHrNote,
-              timestamp: Math.floor(Date.now() / 1000),
-            }
-          ])
-        }}>Send</Button>
+        <Button
+          variant="outlined"
+          onClick={() => {
+            setHrNotes([
+              ...hrNotes,
+              {
+                body: currentHrNote,
+                timestamp: Math.floor(Date.now() / 1000),
+              },
+            ]);
+          }}
+        >
+          Send
+        </Button>
       </Box>
     </Box>
-  )
+  );
 };

@@ -23,28 +23,29 @@ import { mock } from "../../mock/mock";
 const UserAvatar = ({ name }: { name: string }) => {
   return (
     <Avatar
-      src={'/avatars/' + name + '.jpg'}
+      src={"/avatars/" + name + ".jpg"}
       sx={{
-        backgroundColor: '#E3F7E8',
-        color: '#00871D'
+        backgroundColor: "#E3F7E8",
+        color: "#00871D",
       }}
     >
       {getUserInitials(name)}
     </Avatar>
   );
-}
+};
 
-type UserStatus = { userId: number, zScore: number };
+type UserStatus = { userId: number; zScore: number };
 
 const getZScore = (usersStatus: UserStatus[], userId: number): number => {
-  return usersStatus.find(e => e.userId === userId)?.zScore ?? 0;
-}
+  return usersStatus.find((e) => e.userId === userId)?.zScore ?? 0;
+};
 
 export const UserSideMenu = () => {
   const { selectedUser, setSelectedUser } = useContext(SelectedUserContext);
   const [value, setValue] = useState<User | null>(null);
-  const [usersStatus, setUsersStatus] = useState<UserStatus[] | undefined>(undefined)
-
+  const [usersStatus, setUsersStatus] = useState<UserStatus[] | undefined>(
+    undefined,
+  );
 
   React.useEffect(() => {
     const usersStatusCalc: UserStatus[] = [];
@@ -52,7 +53,7 @@ export const UserSideMenu = () => {
     for (let j = 0; j < mock.length; j++) {
       usersStatusCalc.push({
         userId: Number(mock[j].userId),
-        zScore: mock[j].scores[mock[j].scores.length - 1].zScore
+        zScore: mock[j].scores[mock[j].scores.length - 1].zScore,
       });
     }
 
@@ -90,7 +91,7 @@ export const UserSideMenu = () => {
   return (
     <Box
       sx={{
-        height: "calc(100% - 82px - 16px)",
+        height: "100%",
         flex: 0,
         width: "100%",
         borderRadius: 2,
@@ -133,9 +134,7 @@ export const UserSideMenu = () => {
               component="li"
               {...props}
             >
-              <UserAvatar
-                name={option.name}
-              />
+              <UserAvatar name={option.name} />
 
               <Typography>{option.name}</Typography>
             </Box>
@@ -206,9 +205,7 @@ export const UserSideMenu = () => {
                     gap: 1,
                   }}
                 >
-                  <UserAvatar
-                    name={u.name}
-                  />
+                  <UserAvatar name={u.name} />
 
                   <Typography
                     sx={{
@@ -219,15 +216,13 @@ export const UserSideMenu = () => {
                     {u.name}
                   </Typography>
 
-                  {getZScore(usersStatus, u.id) <= 2 ? <></> : getZScore(usersStatus, u.id) > 3 ? <Chip
-                    color="error"
-                    label="Required"
-                    size="small"
-                  /> : <Chip
-                    color="warning"
-                    label="Review"
-                    size="small"
-                  />}
+                  {getZScore(usersStatus, u.id) <= 2 ? (
+                    <></>
+                  ) : getZScore(usersStatus, u.id) > 3 ? (
+                    <Chip color="error" label="Required" size="small" />
+                  ) : (
+                    <Chip color="warning" label="Review" size="small" />
+                  )}
                 </Box>
               </Box>
             </ListItem>

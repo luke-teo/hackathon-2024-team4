@@ -7,7 +7,9 @@ import { SelectedUserContext } from "../context/SelectedUserContext";
 
 export const BehaviorScore = (): JSX.Element => {
   const { selectedUser } = useContext(SelectedUserContext);
-  const [userZScore, setUserZScore] = React.useState<number | undefined>(undefined);
+  const [userZScore, setUserZScore] = React.useState<number | undefined>(
+    undefined,
+  );
 
   useEffect(() => {
     if (selectedUser === undefined) {
@@ -18,8 +20,9 @@ export const BehaviorScore = (): JSX.Element => {
 
     for (let i = 0; i < userScoreMock.length; i++) {
       if (Number(userScoreMock[i].userId) === selectedUser?.id) {
-
-        setUserZScore(userScoreMock[i].scores[userScoreMock[i].scores.length - 1].zScore);
+        setUserZScore(
+          userScoreMock[i].scores[userScoreMock[i].scores.length - 1].zScore,
+        );
       }
     }
   }, [selectedUser, setUserZScore]);
@@ -40,7 +43,7 @@ export const BehaviorScore = (): JSX.Element => {
           No user selected
         </Typography>
       </Box>
-    )
+    );
   }
 
   if (userZScore === undefined) {
@@ -63,6 +66,8 @@ export const BehaviorScore = (): JSX.Element => {
   return (
     <Box
       sx={{
+        flex: 0,
+        height: "fit-content",
         borderRadius: 2,
         background: colors.BackgroundBaseWhite,
       }}
@@ -88,19 +93,25 @@ export const BehaviorScore = (): JSX.Element => {
           Behavior score
         </Typography>
 
-        {userZScore <= 2 ? <TrendingUp
-          sx={{
-            color: colors.TextForegroundSuccess,
-          }}
-        /> : userZScore > 3 ? <TrendingDown
-          sx={{
-            color: colors.TextForegroundDanger,
-          }}
-        /> : <TrendingFlat
-          sx={{
-            color: colors.TextForegroundWarning,
-          }}
-        />}
+        {userZScore <= 2 ? (
+          <TrendingUp
+            sx={{
+              color: colors.TextForegroundSuccess,
+            }}
+          />
+        ) : userZScore > 3 ? (
+          <TrendingDown
+            sx={{
+              color: colors.TextForegroundDanger,
+            }}
+          />
+        ) : (
+          <TrendingFlat
+            sx={{
+              color: colors.TextForegroundWarning,
+            }}
+          />
+        )}
       </Box>
 
       <Box
@@ -127,7 +138,12 @@ export const BehaviorScore = (): JSX.Element => {
           <Typography
             sx={{
               fontSize: 72,
-              color: userZScore <= 2 ? colors.TextForegroundSuccess : userZScore > 3 ? colors.TextForegroundDanger : colors.TextForegroundWarning,
+              color:
+                userZScore <= 2
+                  ? colors.TextForegroundSuccess
+                  : userZScore > 3
+                    ? colors.TextForegroundDanger
+                    : colors.TextForegroundWarning,
               fontWeight: "bold",
             }}
           >
@@ -151,9 +167,13 @@ export const BehaviorScore = (): JSX.Element => {
             color: colors.TextForegroundLow,
           }}
         >
-          {userZScore <= 2 ? "This person is doing well." : userZScore > 3 ? "This person's performance is worrisome." : "This person requires some attention."}
+          {userZScore <= 2
+            ? "This person is doing well."
+            : userZScore > 3
+              ? "This person's performance is worrisome."
+              : "This person requires some attention."}
         </Typography>
       </Box>
     </Box>
-  )
-}
+  );
+};
