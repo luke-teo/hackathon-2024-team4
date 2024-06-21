@@ -13,4 +13,5 @@ export const colors = {
 	TextForegroundLow: "#535D6E",
 	TextForegroundSuccess: "#66bb6a",
 	TextForegroundWarning: "#ffa726",
+	TertiaryAlpha: "rgba(212, 217, 225, 0.5)",
 };
