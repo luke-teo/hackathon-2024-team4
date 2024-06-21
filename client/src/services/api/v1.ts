@@ -16,6 +16,16 @@ const injectedRtkApi = api
           params: { startDate: queryArg.startDate, endDate: queryArg.endDate },
         }),
       }),
+      postUploadCsv: build.mutation<
+        PostUploadCsvApiResponse,
+        PostUploadCsvApiArg
+      >({
+        query: (queryArg) => ({
+          url: `/upload_csv`,
+          method: "POST",
+          body: queryArg.body,
+        }),
+      }),
     }),
     overrideExisting: false,
   });
@@ -33,6 +43,13 @@ export type GetScoresByUserIdApiArg = {
   endDate: string;
   body: Blob;
 };
+export type PostUploadCsvApiResponse = /** status 200 OK */ void;
+export type PostUploadCsvApiArg = {
+  body: {
+    filename?: string;
+    file?: Blob;
+  };
+};
 export type Score = {
   date: string;
   currentScore: number;
@@ -40,5 +57,8 @@ export type Score = {
   standardDeviation: number;
   zScore: number;
 };
-export const { useGetScoresByUserIdQuery, useLazyGetScoresByUserIdQuery } =
-  injectedRtkApi;
+export const {
+  useGetScoresByUserIdQuery,
+  useLazyGetScoresByUserIdQuery,
+  usePostUploadCsvMutation,
+} = injectedRtkApi;

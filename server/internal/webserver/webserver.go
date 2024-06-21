@@ -31,7 +31,7 @@ func NewWebserver(app *config.App) *Webserver {
 	r.Use(middleware.NewLoggerMiddleware(app.Logger()))
 	r.Use(chimiddleware.Recoverer)
 
-	baseURL := ""
+	baseURL := "/api"
 	serverOptions := oapi.StrictHTTPServerOptions{}
 	strictHandler := oapi.NewStrictHandlerWithOptions(
 		handler,

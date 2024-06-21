@@ -122,3 +122,27 @@ paths:
           $ref: "#/components/responses/400Error"
         '500':
           $ref: "#/components/responses/500Error"
+  /upload_csv:
+    post:
+      description: Upload and parse csv file contains users text chat
+      operationId: PostUploadCsv
+      security: []
+      parameters: []
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                filename:
+                  type: string
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: OK
+        '400':
+          $ref: "#/components/responses/400Error"
+        '500':
+          $ref: "#/components/responses/500Error"
