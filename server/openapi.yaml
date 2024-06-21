@@ -24,7 +24,8 @@ components:
         standardDeviation:
           type: integer
         zScore:
-          type: integer
+          type: number
+          format: float
       required:
         - date
         - currentScore

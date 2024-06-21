@@ -2,13 +2,27 @@ package domain_service
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
+	"time"
 
+	"github.com/google/uuid"
 	"github.com/sashabaranov/go-openai"
 
 	"first_move/config"
 	"first_move/generated/db/first_move/public/model"
+	"first_move/internal/app/util_service"
 )
+
+type Response struct {
+	Result []struct {
+		UserId string
+		Data   []struct {
+			Date  util_service.JSONDate
+			Score int
+		}
+	}
+}
 
 func ParseTextChat(
 	ctx context.Context,
@@ -91,19 +105,33 @@ func ParseTextChat(
         Use these guidelines to consistently rate the messages based on their conveyed attitude.
 
         Output format (in JSON):
-        - userId represent who send the messages
-        - score: message score
+        - userId represent who send the messages.
+        - score: message score. minimum 0, and maximum 100.
             {
-              "result":[
+              "result": [
                 {
-                    "userId":{
-                        "data":[
-                            {
-                                "timestamp":"yyyy-mm-dd",
-                                "score": 11
-                            }
-                        ]
+                  "userId": "1",
+                  "data": [
+                    {
+                      "date": "yyyy-mm-dd",
+                      "score": 11
                     }
+                  ]
+                }
+              ]
+            }
+
+        Example output:
+            {
+              "result": [
+                {
+                  "userId": "2",
+                  "data": [
+                    {
+                      "date": "2024-01-01",
+                      "score": 80
+                    }
+                  ]
                 }
               ]
             }
@@ -119,11 +147,14 @@ func ParseTextChat(
 		},
 	}
 
-	res, err := client.CreateChatCompletion(
+	resp, err := client.CreateChatCompletion(
 		ctx,
 		openai.ChatCompletionRequest{
 			Model:    openai.GPT3Dot5Turbo,
 			Messages: prompts,
+			ResponseFormat: &openai.ChatCompletionResponseFormat{
+				Type: openai.ChatCompletionResponseFormatTypeJSONObject,
+			},
 		},
 	)
 	if err != nil {
@@ -131,9 +162,33 @@ func ParseTextChat(
 	}
 
 	// parse result
+	var respData Response
+	respJson := resp.Choices[0].Message.Content
+	if err = json.Unmarshal([]byte(respJson), &respData); err != nil {
+		return nil, err
+	}
+
+	res := []model.UserBehavior{}
+	now := time.Now()
+	for _, d := range respData.Result {
+		for _, s := range d.Data {
+			res = append(res, model.UserBehavior{
+				ID:        uuid.New(),
+				UserID:    d.UserId,
+				Date:      s.Date.Parse(),
+				Score:     int32(s.Score),
+				CreatedAt: now,
+				UpdatedAt: now,
+			})
+		}
+	}
+
+	fmt.Println("Output RAW:")
+	fmt.Println(respJson)
+
 	fmt.Println("Output:")
 	fmt.Println("----------------")
-	fmt.Println(res)
+	fmt.Println(respData)
 
-	return nil, nil
+	return res, nil
 }

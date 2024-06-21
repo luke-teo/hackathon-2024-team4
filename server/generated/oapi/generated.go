@@ -21,9 +21,11 @@ import (
 
 // Score Summary of user behavior on that day
 type Score struct {
-	CurrentScore     int                `json:"currentScore"`
-	Date             openapi_types.Date `json:"date"`
-	PastAverageScore int                `json:"pastAverageScore"`
+	CurrentScore      int                `json:"currentScore"`
+	Date              openapi_types.Date `json:"date"`
+	Mean              int                `json:"mean"`
+	StandardDeviation int                `json:"standardDeviation"`
+	ZScore            float32            `json:"zScore"`
 }
 
 // N400Error defines model for 400Error.
@@ -373,6 +375,7 @@ func ParseGetScoresByUserIDResponse(rsp *http.Response) (*GetScoresByUserIDRespo
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+
 	// (GET /scores/{userId})
 	GetScoresByUserID(w http.ResponseWriter, r *http.Request, userId string, params GetScoresByUserIDParams)
 }
@@ -416,6 +419,7 @@ func (siw *ServerInterfaceWrapper) GetScoresByUserID(w http.ResponseWriter, r *h
 	// ------------- Required query parameter "startDate" -------------
 
 	if paramValue := r.URL.Query().Get("startDate"); paramValue != "" {
+
 	} else {
 		siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "startDate"})
 		return
@@ -430,6 +434,7 @@ func (siw *ServerInterfaceWrapper) GetScoresByUserID(w http.ResponseWriter, r *h
 	// ------------- Required query parameter "endDate" -------------
 
 	if paramValue := r.URL.Query().Get("endDate"); paramValue != "" {
+
 	} else {
 		siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "endDate"})
 		return
@@ -626,14 +631,13 @@ func (response GetScoresByUserID500JSONResponse) VisitGetScoresByUserIDResponse(
 
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
+
 	// (GET /scores/{userId})
 	GetScoresByUserID(ctx context.Context, request GetScoresByUserIDRequestObject) (GetScoresByUserIDResponseObject, error)
 }
 
-type (
-	StrictHandlerFunc    = strictnethttp.StrictHTTPHandlerFunc
-	StrictMiddlewareFunc = strictnethttp.StrictHTTPMiddlewareFunc
-)
+type StrictHandlerFunc = strictnethttp.StrictHTTPHandlerFunc
+type StrictMiddlewareFunc = strictnethttp.StrictHTTPMiddlewareFunc
 
 type StrictHTTPServerOptions struct {
 	RequestErrorHandlerFunc  func(w http.ResponseWriter, r *http.Request, err error)

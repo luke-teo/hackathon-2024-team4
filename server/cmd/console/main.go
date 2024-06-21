@@ -19,7 +19,7 @@ func main() {
 		opts = os.Args[2:]
 	}
 
-  fmt.Println(opts)
+	fmt.Println(opts)
 
 	app := config.NewApp()
 	c := console.NewConsole(app)
