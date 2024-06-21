@@ -12,6 +12,7 @@ import { HrNote } from "../../utils/types";
 import { hrNotesMock } from "../../mock/hrNotesMock";
 
 export const FollowUp = (): JSX.Element => {
+  const notesEndRef = React.useRef<HTMLDivElement | null>(null);
   const { selectedUser } = useContext(SelectedUserContext);
   const [hrNotes, setHrNotes] = React.useState<HrNote[] | undefined>(undefined);
   const [currentHrNote, setCurrentHrNote] = React.useState<string>("");
@@ -27,6 +28,10 @@ export const FollowUp = (): JSX.Element => {
       }
     }
   }, [selectedUser, setHrNotes]);
+
+  useEffect(() => {
+    notesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [hrNotes])
 
   if (selectedUser === null) {
     return (
@@ -137,6 +142,7 @@ export const FollowUp = (): JSX.Element => {
             </Typography>
           </Box>
         ))}
+        <div ref={notesEndRef} />
       </Box>
 
       <Box
@@ -172,6 +178,8 @@ export const FollowUp = (): JSX.Element => {
                 timestamp: Math.floor(Date.now() / 1000),
               },
             ]);
+
+            setCurrentHrNote('')
           }}
         >
           Send
