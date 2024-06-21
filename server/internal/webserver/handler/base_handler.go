@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"go_chi_template/config"
-	"go_chi_template/generated/oapi"
+	"first_move/config"
+	"first_move/generated/oapi"
 )
 
 type Handler struct {

@@ -15,8 +15,7 @@ type EnvProvider struct {
 	redisPort        string
 	redisPassword    string
 	logLevel         string
-	sentryDsn        string
-	sentryEnv        string
+	openaiApiKey     string
 }
 
 func (e *EnvProvider) AppEnv() string {
@@ -27,7 +26,11 @@ func (e *EnvProvider) ServerPort() string {
 	return e.serverPort
 }
 
-func NewEnvProvider(rootDir string) *EnvProvider {
+func (e *EnvProvider) OpenaiApiKey() string {
+	return e.openaiApiKey
+}
+
+func NewEnvProvider() *EnvProvider {
 	fallbackLookupEnv := func(key string, fallback string) string {
 		value, exists := os.LookupEnv(key)
 		if !exists {
@@ -52,8 +55,7 @@ func NewEnvProvider(rootDir string) *EnvProvider {
 	redisPort := requireLookupEnv("REDIS_PORT")
 	redisPassword := fallbackLookupEnv("REDIS_PASSWORD", "")
 	logLevel := requireLookupEnv("LOG_LEVEL")
-	sentryDsn := fallbackLookupEnv("SENTRY_DSN", "")
-	sentryEnv := fallbackLookupEnv("SENTRY_ENV", "local")
+	openaiApiKey := requireLookupEnv("OPENAI_API_KEY")
 
 	databaseMaxConnsString := fallbackLookupEnv("DATABASE_MAX_CONNS", "5")
 	parsedDatabaseMaxConns, err := strconv.Atoi(databaseMaxConnsString)
@@ -70,8 +72,7 @@ func NewEnvProvider(rootDir string) *EnvProvider {
 		redisPort:        redisPort,
 		redisPassword:    redisPassword,
 		logLevel:         logLevel,
-		sentryDsn:        sentryDsn,
-		sentryEnv:        sentryEnv,
+		openaiApiKey:     openaiApiKey,
 	}
 
 	return &envProvider

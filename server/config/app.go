@@ -2,13 +2,11 @@ package config
 
 import (
 	"database/sql"
-	"go_chi_template/config/provider"
-	"path"
-	"runtime"
 
-	sentryhttp "github.com/getsentry/sentry-go/http"
 	"github.com/redis/go-redis/v9"
 	"go.uber.org/zap"
+
+	"first_move/config/provider"
 )
 
 type App struct {
@@ -18,13 +16,10 @@ type App struct {
 	rootDir string
 	logger  *zap.Logger
 	queue   *provider.AsynqProvider
-	sentry  *sentryhttp.Handler
 }
 
 func (app *App) EnvVars() *provider.EnvProvider {
-
 	return app.env
-
 }
 
 func (app *App) DB() *sql.DB {
@@ -55,33 +50,10 @@ func (app *App) Queue() *provider.AsynqProvider {
 	return app.queue
 }
 
-func (app *App) Sentry() *sentryhttp.Handler {
-	if app.sentry == nil {
-		app.sentry = provider.NewSentryProvider(app.env)
-	}
-	return app.sentry
-}
-
-func (app *App) setRootDir() {
-	_, b, _, _ := runtime.Caller(0)
-	app.rootDir = path.Join(path.Dir(b), "..")
-}
-
-func (app *App) UseTestDB() {
-	app.db = provider.NewTestDbProvider(app.env)
-}
-
-func (app *App) UseTestQueue() {
-	app.queue = provider.NewTestQueueProvider(app.env)
-}
-
 func NewApp() *App {
 	app := App{}
 
-	app.setRootDir()
-	app.env = provider.NewEnvProvider(app.rootDir)
-	provider.NewValidationProvider()
-	app.Sentry()
+	app.env = provider.NewEnvProvider()
 
 	return &app
 }

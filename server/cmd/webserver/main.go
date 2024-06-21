@@ -1,8 +1,8 @@
 package main
 
 import (
-	"go_chi_template/config"
-	"go_chi_template/internal/webserver"
+	"first_move/config"
+	"first_move/internal/webserver"
 )
 
 func main() {
