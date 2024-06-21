@@ -23,6 +23,7 @@ export const BehaviorScore = (): JSX.Element => {
   const latestScore =
     scores && scores.length > 1 ? scores[scores.length - 1] : null;
 
+  console.log(latestScore?.zScore);
   if (selectedUser === null) {
     return (
       <Box
