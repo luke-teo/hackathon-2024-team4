@@ -18,7 +18,7 @@ type Props = {
 	scores: Score[];
 };
 
-const LineChartComponent = ({ datetime, scores }: Props) => {
+export const LineChartComponent = ({ datetime, scores }: Props) => {
 	const relevantScores = scores.filter(
 		(s) =>
 			DateTime.fromISO(s.date).month === datetime.month &&
@@ -70,7 +70,7 @@ const LineChartComponent = ({ datetime, scores }: Props) => {
 					type="monotone"
 					dataKey="stdRange"
 					stroke="none"
-					fill="rgba(75, 192, 192, 0.1)"
+					fill="rgba(185, 192, 204, 0.3)"
 					activeDot={{ r: 0 }}
 					legendType="none"
 					tooltipType="none"
@@ -78,18 +78,18 @@ const LineChartComponent = ({ datetime, scores }: Props) => {
 				<Line
 					type="monotone"
 					dataKey="score"
-					stroke="rgb(255, 99, 132)"
+					stroke="#5E1CDE"
 					dot={false}
+					label="Score"
 				/>
 				<Line
 					type="monotone"
 					dataKey="mean"
-					stroke="rgb(53, 162, 235)"
+					stroke="#FFB200"
 					dot={false}
+					label="Avg."
 				/>
 			</ComposedChart>
 		</ResponsiveContainer>
 	);
 };
-
-export default LineChartComponent;
