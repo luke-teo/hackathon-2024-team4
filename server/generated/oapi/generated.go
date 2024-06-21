@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"mime/multipart"
 	"net/http"
 	"net/url"
 	"strings"
@@ -54,8 +55,17 @@ type GetScoresByUserIDParams struct {
 	EndDate openapi_types.Date `form:"endDate" json:"endDate"`
 }
 
+// PostUploadCsvMultipartBody defines parameters for PostUploadCsv.
+type PostUploadCsvMultipartBody struct {
+	File     *openapi_types.File `json:"file,omitempty"`
+	Filename *string             `json:"filename,omitempty"`
+}
+
 // GetScoresByUserIDJSONRequestBody defines body for GetScoresByUserID for application/json ContentType.
 type GetScoresByUserIDJSONRequestBody GetScoresByUserIDJSONBody
+
+// PostUploadCsvMultipartRequestBody defines body for PostUploadCsv for multipart/form-data ContentType.
+type PostUploadCsvMultipartRequestBody PostUploadCsvMultipartBody
 
 // RequestEditorFn  is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -134,6 +144,9 @@ type ClientInterface interface {
 	GetScoresByUserIDWithBody(ctx context.Context, userId string, params *GetScoresByUserIDParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	GetScoresByUserID(ctx context.Context, userId string, params *GetScoresByUserIDParams, body GetScoresByUserIDJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// PostUploadCsvWithBody request with any body
+	PostUploadCsvWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 func (c *Client) GetScoresByUserIDWithBody(ctx context.Context, userId string, params *GetScoresByUserIDParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
@@ -150,6 +163,18 @@ func (c *Client) GetScoresByUserIDWithBody(ctx context.Context, userId string, p
 
 func (c *Client) GetScoresByUserID(ctx context.Context, userId string, params *GetScoresByUserIDParams, body GetScoresByUserIDJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetScoresByUserIDRequest(c.Server, userId, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+func (c *Client) PostUploadCsvWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPostUploadCsvRequestWithBody(c.Server, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -237,6 +262,35 @@ func NewGetScoresByUserIDRequestWithBody(server string, userId string, params *G
 	return req, nil
 }
 
+// NewPostUploadCsvRequestWithBody generates requests for PostUploadCsv with any type of body
+func NewPostUploadCsvRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := fmt.Sprintf("/upload_csv")
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	return req, nil
+}
+
 func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
@@ -284,6 +338,9 @@ type ClientWithResponsesInterface interface {
 	GetScoresByUserIDWithBodyWithResponse(ctx context.Context, userId string, params *GetScoresByUserIDParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*GetScoresByUserIDResponse, error)
 
 	GetScoresByUserIDWithResponse(ctx context.Context, userId string, params *GetScoresByUserIDParams, body GetScoresByUserIDJSONRequestBody, reqEditors ...RequestEditorFn) (*GetScoresByUserIDResponse, error)
+
+	// PostUploadCsvWithBodyWithResponse request with any body
+	PostUploadCsvWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostUploadCsvResponse, error)
 }
 
 type GetScoresByUserIDResponse struct {
@@ -313,6 +370,29 @@ func (r GetScoresByUserIDResponse) StatusCode() int {
 	return 0
 }
 
+type PostUploadCsvResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	JSON400      *N400Error
+	JSON500      *N500Error
+}
+
+// Status returns HTTPResponse.Status
+func (r PostUploadCsvResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r PostUploadCsvResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
 // GetScoresByUserIDWithBodyWithResponse request with arbitrary body returning *GetScoresByUserIDResponse
 func (c *ClientWithResponses) GetScoresByUserIDWithBodyWithResponse(ctx context.Context, userId string, params *GetScoresByUserIDParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*GetScoresByUserIDResponse, error) {
 	rsp, err := c.GetScoresByUserIDWithBody(ctx, userId, params, contentType, body, reqEditors...)
@@ -328,6 +408,15 @@ func (c *ClientWithResponses) GetScoresByUserIDWithResponse(ctx context.Context,
 		return nil, err
 	}
 	return ParseGetScoresByUserIDResponse(rsp)
+}
+
+// PostUploadCsvWithBodyWithResponse request with arbitrary body returning *PostUploadCsvResponse
+func (c *ClientWithResponses) PostUploadCsvWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostUploadCsvResponse, error) {
+	rsp, err := c.PostUploadCsvWithBody(ctx, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePostUploadCsvResponse(rsp)
 }
 
 // ParseGetScoresByUserIDResponse parses an HTTP response from a GetScoresByUserIDWithResponse call
@@ -373,11 +462,47 @@ func ParseGetScoresByUserIDResponse(rsp *http.Response) (*GetScoresByUserIDRespo
 	return response, nil
 }
 
+// ParsePostUploadCsvResponse parses an HTTP response from a PostUploadCsvWithResponse call
+func ParsePostUploadCsvResponse(rsp *http.Response) (*PostUploadCsvResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &PostUploadCsvResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest N400Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest N500Error
+		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON500 = &dest
+
+	}
+
+	return response, nil
+}
+
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
 
 	// (GET /scores/{userId})
 	GetScoresByUserID(w http.ResponseWriter, r *http.Request, userId string, params GetScoresByUserIDParams)
+
+	// (POST /upload_csv)
+	PostUploadCsv(w http.ResponseWriter, r *http.Request)
 }
 
 // Unimplemented server implementation that returns http.StatusNotImplemented for each endpoint.
@@ -386,6 +511,11 @@ type Unimplemented struct{}
 
 // (GET /scores/{userId})
 func (_ Unimplemented) GetScoresByUserID(w http.ResponseWriter, r *http.Request, userId string, params GetScoresByUserIDParams) {
+	w.WriteHeader(http.StatusNotImplemented)
+}
+
+// (POST /upload_csv)
+func (_ Unimplemented) PostUploadCsv(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -448,6 +578,21 @@ func (siw *ServerInterfaceWrapper) GetScoresByUserID(w http.ResponseWriter, r *h
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		siw.Handler.GetScoresByUserID(w, r, userId, params)
+	}))
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		handler = middleware(handler)
+	}
+
+	handler.ServeHTTP(w, r.WithContext(ctx))
+}
+
+// PostUploadCsv operation middleware
+func (siw *ServerInterfaceWrapper) PostUploadCsv(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+
+	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		siw.Handler.PostUploadCsv(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -573,6 +718,9 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	r.Group(func(r chi.Router) {
 		r.Get(options.BaseURL+"/scores/{userId}", wrapper.GetScoresByUserID)
 	})
+	r.Group(func(r chi.Router) {
+		r.Post(options.BaseURL+"/upload_csv", wrapper.PostUploadCsv)
+	})
 
 	return r
 }
@@ -629,11 +777,48 @@ func (response GetScoresByUserID500JSONResponse) VisitGetScoresByUserIDResponse(
 	return json.NewEncoder(w).Encode(response)
 }
 
+type PostUploadCsvRequestObject struct {
+	Body *multipart.Reader
+}
+
+type PostUploadCsvResponseObject interface {
+	VisitPostUploadCsvResponse(w http.ResponseWriter) error
+}
+
+type PostUploadCsv200Response struct {
+}
+
+func (response PostUploadCsv200Response) VisitPostUploadCsvResponse(w http.ResponseWriter) error {
+	w.WriteHeader(200)
+	return nil
+}
+
+type PostUploadCsv400JSONResponse struct{ N400ErrorJSONResponse }
+
+func (response PostUploadCsv400JSONResponse) VisitPostUploadCsvResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
+type PostUploadCsv500JSONResponse struct{ N500ErrorJSONResponse }
+
+func (response PostUploadCsv500JSONResponse) VisitPostUploadCsvResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(500)
+
+	return json.NewEncoder(w).Encode(response)
+}
+
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
 
 	// (GET /scores/{userId})
 	GetScoresByUserID(ctx context.Context, request GetScoresByUserIDRequestObject) (GetScoresByUserIDResponseObject, error)
+
+	// (POST /upload_csv)
+	PostUploadCsv(ctx context.Context, request PostUploadCsvRequestObject) (PostUploadCsvResponseObject, error)
 }
 
 type StrictHandlerFunc = strictnethttp.StrictHTTPHandlerFunc
@@ -692,6 +877,37 @@ func (sh *strictHandler) GetScoresByUserID(w http.ResponseWriter, r *http.Reques
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
 	} else if validResponse, ok := response.(GetScoresByUserIDResponseObject); ok {
 		if err := validResponse.VisitGetScoresByUserIDResponse(w); err != nil {
+			sh.options.ResponseErrorHandlerFunc(w, r, err)
+		}
+	} else if response != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
+	}
+}
+
+// PostUploadCsv operation middleware
+func (sh *strictHandler) PostUploadCsv(w http.ResponseWriter, r *http.Request) {
+	var request PostUploadCsvRequestObject
+
+	if reader, err := r.MultipartReader(); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode multipart body: %w", err))
+		return
+	} else {
+		request.Body = reader
+	}
+
+	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
+		return sh.ssi.PostUploadCsv(ctx, request.(PostUploadCsvRequestObject))
+	}
+	for _, middleware := range sh.middlewares {
+		handler = middleware(handler, "PostUploadCsv")
+	}
+
+	response, err := handler(r.Context(), w, r, request)
+
+	if err != nil {
+		sh.options.ResponseErrorHandlerFunc(w, r, err)
+	} else if validResponse, ok := response.(PostUploadCsvResponseObject); ok {
+		if err := validResponse.VisitPostUploadCsvResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {

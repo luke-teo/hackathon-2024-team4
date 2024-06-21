@@ -2,6 +2,7 @@ import {
   Autocomplete,
   Avatar,
   Box,
+  Button,
   Chip,
   CircularProgress,
   IconButton,
@@ -19,32 +20,41 @@ import PersonIcon from "@mui/icons-material/Person";
 import { colors } from "../../utils/colors";
 import type { User } from "../../utils/types";
 import { mock } from "../../mock/mock";
+import { FileUploadDialog } from "./FileUploadDialog";
 
-const UserAvatar = ({ avatarUrl, name }: { avatarUrl: string, name: string }) => {
+const UserAvatar = ({
+  avatarUrl,
+  name,
+}: {
+  avatarUrl: string;
+  name: string;
+}) => {
   return (
     <Avatar
       src={avatarUrl}
       sx={{
-        backgroundColor: '#E3F7E8',
-        color: '#00871D'
+        backgroundColor: "#E3F7E8",
+        color: "#00871D",
       }}
     >
       {getUserInitials(name)}
     </Avatar>
   );
-}
+};
 
-type UserStatus = { userId: number, zScore: number };
+type UserStatus = { userId: number; zScore: number };
 
 const getZScore = (usersStatus: UserStatus[], userId: number): number => {
-  return usersStatus.find(e => e.userId === userId)?.zScore ?? 0;
-}
+  return usersStatus.find((e) => e.userId === userId)?.zScore ?? 0;
+};
 
 export const UserSideMenu = () => {
   const { selectedUser, setSelectedUser } = useContext(SelectedUserContext);
   const [value, setValue] = useState<User | null>(null);
-  const [usersStatus, setUsersStatus] = useState<UserStatus[] | undefined>(undefined)
-
+  const [usersStatus, setUsersStatus] = useState<UserStatus[] | undefined>(
+    undefined,
+  );
+  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState<boolean>(false);
 
   React.useEffect(() => {
     const usersStatusCalc: UserStatus[] = [];
@@ -52,7 +62,7 @@ export const UserSideMenu = () => {
     for (let j = 0; j < mock.length; j++) {
       usersStatusCalc.push({
         userId: Number(mock[j].userId),
-        zScore: mock[j].scores[mock[j].scores.length - 1].zScore
+        zScore: mock[j].scores[mock[j].scores.length - 1].zScore,
       });
     }
 
@@ -68,6 +78,11 @@ export const UserSideMenu = () => {
     e.preventDefault();
     setSelectedUser(null);
     setValue(null);
+  };
+
+  const handleClickUpload = (e: MouseEvent) => {
+    e.preventDefault();
+    setIsUploadDialogOpen(true);
   };
 
   if (usersStatus === undefined) {
@@ -133,10 +148,7 @@ export const UserSideMenu = () => {
               component="li"
               {...props}
             >
-              <UserAvatar
-                avatarUrl={option.avatarUrl}
-                name={option.name}
-              />
+              <UserAvatar avatarUrl={option.avatarUrl} name={option.name} />
 
               <Typography>{option.name}</Typography>
             </Box>
@@ -207,10 +219,7 @@ export const UserSideMenu = () => {
                     gap: 1,
                   }}
                 >
-                  <UserAvatar
-                    avatarUrl={u.avatarUrl}
-                    name={u.name}
-                  />
+                  <UserAvatar avatarUrl={u.avatarUrl} name={u.name} />
 
                   <Typography
                     sx={{
@@ -221,21 +230,41 @@ export const UserSideMenu = () => {
                     {u.name}
                   </Typography>
 
-                  {getZScore(usersStatus, u.id) <= 2 ? <></> : getZScore(usersStatus, u.id) > 3 ? <Chip
-                    color="error"
-                    label="Required"
-                    size="small"
-                  /> : <Chip
-                    color="warning"
-                    label="Review"
-                    size="small"
-                  />}
+                  {getZScore(usersStatus, u.id) <= 2 ? (
+                    <></>
+                  ) : getZScore(usersStatus, u.id) > 3 ? (
+                    <Chip color="error" label="Required" size="small" />
+                  ) : (
+                    <Chip color="warning" label="Review" size="small" />
+                  )}
                 </Box>
               </Box>
             </ListItem>
           ))}
         </Box>
       </Box>
+
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "end",
+          paddingY: "30px",
+          paddingX: "18px",
+        }}
+      >
+        <Button
+          size="small"
+          variant="contained"
+          sx={{ backgroundColor: "#9C72ED" }}
+          onClick={handleClickUpload}
+        >
+          Upload CSV
+        </Button>
+      </Box>
+
+      {isUploadDialogOpen && (
+        <FileUploadDialog onClose={() => setIsUploadDialogOpen(false)} />
+      )}
     </Box>
   );
 };
