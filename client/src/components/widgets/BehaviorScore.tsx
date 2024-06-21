@@ -1,8 +1,65 @@
 import { TrendingUp } from "@mui/icons-material";
-import { Box, Typography } from "@mui/material";
+import { Box, CircularProgress, Typography } from "@mui/material";
 import { colors } from "../../utils/colors";
+import React, { useContext, useEffect } from "react";
+import { mock } from "../../mock/mock";
+import { SelectedUserContext } from "../context/SelectedUserContext";
 
 export const BehaviorScore = (): JSX.Element => {
+  const { selectedUser } = useContext(SelectedUserContext);
+  const [userZScore, setUserZScore] = React.useState<number | undefined>(undefined);
+
+  useEffect(() => {
+    if (selectedUser === undefined) {
+      setUserZScore(undefined);
+    }
+
+    const userScoreMock = mock;
+
+    for (let i = 0; i < userScoreMock.length; i++) {
+      if (Number(userScoreMock[i].userId) === selectedUser?.id) {
+
+        setUserZScore(userScoreMock[i].scores[userScoreMock[i].scores.length - 1].zScore);
+      }
+    }
+  }, [selectedUser, setUserZScore]);
+
+  if (selectedUser === null) {
+    return (
+      <Box
+        sx={{
+          alignItems: "center",
+          background: colors.BackgroundBaseWhite,
+          borderRadius: 2,
+          display: "flex",
+          justifyContent: "center",
+          p: 2,
+        }}
+      >
+        <Typography sx={{ color: colors.TextForegroundLow }}>
+          No user selected
+        </Typography>
+      </Box>
+    )
+  }
+
+  if (userZScore === undefined) {
+    return (
+      <Box
+        sx={{
+          alignItems: "center",
+          background: colors.BackgroundBaseWhite,
+          borderRadius: 2,
+          display: "flex",
+          justifyContent: "center",
+          p: 2,
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
   return (
     <Box
       sx={{
@@ -66,7 +123,7 @@ export const BehaviorScore = (): JSX.Element => {
               fontWeight: "bold",
             }}
           >
-            70
+            {userZScore <= 2 ? "A" : userZScore > 3 ? "C" : "B"}
           </Typography>
         </Box>
       </Box>
