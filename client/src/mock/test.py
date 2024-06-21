@@ -26,8 +26,8 @@ def generate_score_data():
                 score_obj = {
                     "date": date.strftime("%Y-%m-%d"),
                     "currentScore": int(current_score),
-                    "pastAverageScore": float(past_average_score),
-                    "sd": float(sd),
+                    "mean": float(past_average_score),
+                    "standardDeviation": float(sd),
                     "zScore": float(z_score)
                 }
                 daily_scores.append(score_obj)
