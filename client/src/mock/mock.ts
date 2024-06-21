@@ -10947,7 +10947,7 @@ export const mock: GetScoresByUserIdApiResponse[] = [
           "currentScore": 57,
           "mean": 47.4,
           "standardDeviation": 19.329769786523585,
-          "zScore": 4.4966432661134419
+          "zScore": 2.4966432661134419
         }
       ]
     }
