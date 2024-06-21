@@ -33,12 +33,12 @@ export const UserListItem = ({ user, setValue }: Props) => {
 
 	const isWarning = () => {
 		const zScore = Math.abs(latestScore?.zScore ?? 0);
-		return zScore > 1 && zScore < 2;
+		return zScore > 1 && zScore < 1.5;
 	};
 
 	const isUrgent = () => {
 		const zScore = Math.abs(latestScore?.zScore ?? 0);
-		return zScore > 2;
+		return zScore > 1.5;
 	};
 
 	const handleSelectUser = (u: User) => {
