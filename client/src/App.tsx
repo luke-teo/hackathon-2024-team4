@@ -17,7 +17,7 @@ function App() {
           display: "flex",
           flex: 0,
           flexDirection: "column",
-          height: "100%",
+          height: "calc(100% - 82px - 16px)",
           gap: 2,
           minWidth: 360
         }}>

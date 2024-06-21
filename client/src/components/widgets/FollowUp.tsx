@@ -63,7 +63,10 @@ export const FollowUp = (): JSX.Element => {
       sx={{
         backgroundColor: colors.BackgroundBaseWhite,
         borderRadius: 2,
-        display: "flex",
+        display: "grid",
+        gridTemplateRows: "min-content auto min-content",
+        overflow: "hidden",
+        gridTemplateColumns: "1fr",
         flexDirection: "column",
         flex: 1,
       }}
@@ -95,7 +98,7 @@ export const FollowUp = (): JSX.Element => {
         flexDirection: "column",
         overflowX: "hidden",
         overflowY: "scroll",
-        flex: 1,
+        flex: 0,
         gap: 2,
         p: 2,
         backgroundColor: colors.BackgroundHighlight,
