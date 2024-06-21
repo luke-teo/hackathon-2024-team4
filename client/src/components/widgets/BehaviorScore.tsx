@@ -1,5 +1,5 @@
-import { ArrowUpward, TrendingUp } from "@mui/icons-material";
-import { Box, Card, Divider, Icon, Stack, Typography } from "@mui/material";
+import { TrendingUp } from "@mui/icons-material";
+import { Box, Typography } from "@mui/material";
 import { colors } from "../../utils/colors";
 
 export const BehaviorScore = (): JSX.Element => {
