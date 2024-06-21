@@ -2,6 +2,7 @@ import {
   Autocomplete,
   Avatar,
   Box,
+  Button,
   Chip,
   CircularProgress,
   IconButton,
@@ -19,6 +20,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import { colors } from "../../utils/colors";
 import type { User } from "../../utils/types";
 import { mock } from "../../mock/mock";
+import { FileUploadDialog } from "./FileUploadDialog";
 
 const UserAvatar = ({ name }: { name: string }) => {
   return (
@@ -46,6 +48,7 @@ export const UserSideMenu = () => {
   const [usersStatus, setUsersStatus] = useState<UserStatus[] | undefined>(
     undefined,
   );
+  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState<boolean>(false);
 
   React.useEffect(() => {
     const usersStatusCalc: UserStatus[] = [];
@@ -69,6 +72,11 @@ export const UserSideMenu = () => {
     e.preventDefault();
     setSelectedUser(null);
     setValue(null);
+  };
+
+  const handleClickUpload = (e: MouseEvent) => {
+    e.preventDefault();
+    setIsUploadDialogOpen(true);
   };
 
   if (usersStatus === undefined) {
@@ -229,6 +237,28 @@ export const UserSideMenu = () => {
           ))}
         </Box>
       </Box>
+
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "end",
+          paddingY: "30px",
+          paddingX: "18px",
+        }}
+      >
+        <Button
+          size="small"
+          variant="contained"
+          sx={{ backgroundColor: "#9C72ED" }}
+          onClick={handleClickUpload}
+        >
+          Upload CSV
+        </Button>
+      </Box>
+
+      {isUploadDialogOpen && (
+        <FileUploadDialog onClose={() => setIsUploadDialogOpen(false)} />
+      )}
     </Box>
   );
 };
