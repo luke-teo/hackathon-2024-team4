@@ -14,7 +14,7 @@ def generate_score_data():
     user_ids = [1, 2, 3, 4, 5, 6]
     
     for user_id in user_ids:
-        user_data = {"userId": str(user_id), "score": []}
+        user_data = {"userId": str(user_id), "scores": []}
         for date in date_range:
             daily_scores = []
             for _ in range(5):  # Generate 5 score objects per date
@@ -31,7 +31,7 @@ def generate_score_data():
                     "zScore": float(z_score)
                 }
                 daily_scores.append(score_obj)
-            user_data["score"].extend(daily_scores)
+            user_data["scores"].extend(daily_scores)
         data.append(user_data)
     
     return data
