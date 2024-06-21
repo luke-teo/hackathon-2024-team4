@@ -5,7 +5,7 @@ import { UserSideMenu } from "./components/widgets/UserSideMenu";
 import { SelectedUserProvider } from "./components/context/SelectedUserContext";
 import { ScoreChart } from "./components/widgets/ScoreChart";
 import { BehaviorScore } from "./components/widgets/BehaviorScore";
-import { Information } from "./components/widgets/Information";
+import { FollowUp } from "./components/widgets/FollowUp";
 
 function App() {
   return (
@@ -22,7 +22,7 @@ function App() {
           minWidth: 360
         }}>
           <BehaviorScore />
-          <Information />
+          <FollowUp />
         </Box>
       </Layout>
     </SelectedUserProvider>
