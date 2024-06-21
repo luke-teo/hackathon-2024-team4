@@ -83,6 +83,7 @@ export const FileUploadDialog = ({ closeDialog }: Props): JSX.Element => {
           </Button>
           <LoadingButton
             loading={isLoading}
+            disabled={!file}
             variant="contained"
             onClick={handleUploadFile}
             sx={{ backgroundColor: "#9C72ED" }}
