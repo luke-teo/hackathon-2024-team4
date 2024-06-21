@@ -31,7 +31,7 @@ export const FollowUp = (): JSX.Element => {
 
   useEffect(() => {
     notesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, []);
+  }, [hrNotes]);
 
   if (selectedUser === null) {
     return (
