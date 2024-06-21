@@ -90,7 +90,7 @@ export const UserSideMenu = () => {
   return (
     <Box
       sx={{
-        height: "100%",
+        height: "calc(100% - 82px - 16px)",
         flex: 0,
         width: "100%",
         borderRadius: 2,
