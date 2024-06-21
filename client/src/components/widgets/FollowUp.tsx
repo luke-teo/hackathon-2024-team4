@@ -91,23 +91,30 @@ export const FollowUp = (): JSX.Element => {
 
 
       <Box sx={{
+        display: "flex",
+        flexDirection: "column",
         overflowX: "hidden",
         overflowY: "scroll",
         flex: 1,
-        p: 2
+        gap: 2,
+        p: 2,
+        backgroundColor: colors.BackgroundHighlight,
       }}>
         {hrNotes.map((note, index) => (
           <Box key={index} sx={{
-            borderBottom: 1,
-            borderBottomColor: colors.BorderBase,
+            backgroundColor: colors.BackgroundBaseWhite,
+            borderRadius: 2,
             display: "flex",
-            gap: 2,
+            flexDirection: "column",
+            gap: 1,
             justifyContent: "space-between",
             p: 2,
           }}>
             <Typography>{note.body}</Typography>
-            <Typography>{note.timestamp}</Typography>
-            </Box>))}
+            <Typography sx={{
+              fontSize: 12,
+            }}>{(new Date(note.timestamp * 1000)).toISOString().slice(0, 16).replace('T', ' ').replace(/-/g, '/')}</Typography>
+          </Box>))}
       </Box>
 
       <Box sx={{
@@ -125,13 +132,11 @@ export const FollowUp = (): JSX.Element => {
         }} />
 
         <Button variant="outlined" onClick={() => {
-
-
           setHrNotes([
             ...hrNotes,
             {
               body: currentHrNote,
-              timestamp: 42344232,
+              timestamp: Math.floor(Date.now() / 1000),
             }
           ])
         }}>Send</Button>
