@@ -4,8 +4,8 @@ import { useContext, useState } from "react";
 import { SelectedUserContext } from "../context/SelectedUserContext";
 import { DateTime, type MonthNumbers } from "luxon";
 import { mock } from "../../mock/mock";
-import LineChartComponent from "../LineChartComponent";
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
+import { LineChartComponent } from "../LineChartComponent";
 
 export const ScoreChart = () => {
 	const { selectedUser } = useContext(SelectedUserContext);
