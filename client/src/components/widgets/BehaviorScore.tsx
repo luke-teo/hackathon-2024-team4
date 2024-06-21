@@ -1,4 +1,4 @@
-import { TrendingUp } from "@mui/icons-material";
+import { TrendingDown, TrendingFlat, TrendingUp } from "@mui/icons-material";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import { colors } from "../../utils/colors";
 import React, { useContext, useEffect } from "react";
@@ -88,11 +88,19 @@ export const BehaviorScore = (): JSX.Element => {
           Behavior score
         </Typography>
 
-        <TrendingUp
+        {userZScore <= 2 ? <TrendingUp
           sx={{
-            color: colors.TextForegroundHighlight,
+            color: colors.TextForegroundSuccess,
           }}
-        />
+        /> : userZScore > 3 ? <TrendingDown
+          sx={{
+            color: colors.TextForegroundDanger,
+          }}
+        /> : <TrendingFlat
+          sx={{
+            color: colors.TextForegroundWarning,
+          }}
+        />}
       </Box>
 
       <Box
@@ -119,7 +127,7 @@ export const BehaviorScore = (): JSX.Element => {
           <Typography
             sx={{
               fontSize: 72,
-              color: colors.TextForegroundHighlight,
+              color: userZScore <= 2 ? colors.TextForegroundSuccess : userZScore > 3 ? colors.TextForegroundDanger : colors.TextForegroundWarning,
               fontWeight: "bold",
             }}
           >
@@ -133,19 +141,17 @@ export const BehaviorScore = (): JSX.Element => {
           alignItems: "center",
           backgroundColor: colors.BackgroundHighlight,
           display: "flex",
-          height: 60,
           justifyContent: "center",
-          px: 2,
+          p: 2,
         }}
       >
         <Typography
           sx={{
-            fontSize: 20,
+            fontSize: 16,
             color: colors.TextForegroundLow,
-            fontWeight: "bold",
           }}
         >
-          Rating: Average
+          {userZScore <= 2 ? "This person is doing well." : userZScore > 3 ? "This person's performance is worrisome." : "This person requires some attention."}
         </Typography>
       </Box>
     </Box>
