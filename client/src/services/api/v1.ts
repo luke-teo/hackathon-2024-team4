@@ -36,7 +36,9 @@ export type GetScoresByUserIdApiArg = {
 export type Score = {
   date: string;
   currentScore: number;
-  pastAverageScore: number;
+  mean: number;
+  standardDeviation: number;
+  zScore: number;
 };
 export const { useGetScoresByUserIdQuery, useLazyGetScoresByUserIdQuery } =
   injectedRtkApi;
