@@ -1,4 +1,4 @@
-import { AppBar, Box, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, Toolbar } from "@mui/material";
 import type { ReactNode } from "react";
 import { colors } from "../../utils/colors";
 
@@ -29,7 +29,14 @@ export const Layout = ({ children }: Props) => {
                 }}
             >
                 <Toolbar disableGutters>
-                    <Typography>First Move</Typography>
+                    <Box
+                        component="img"
+                        sx={{
+                            height: 32,
+                        }}
+                        alt="FirstMove"
+                        src="/logo.svg"
+                    />
                 </Toolbar>
             </AppBar>
             <Box

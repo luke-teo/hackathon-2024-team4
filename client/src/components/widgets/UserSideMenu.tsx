@@ -20,10 +20,10 @@ import { colors } from "../../utils/colors";
 import type { User } from "../../utils/types";
 import { mock } from "../../mock/mock";
 
-const UserAvatar = ({ avatarUrl, name }: { avatarUrl: string, name: string }) => {
+const UserAvatar = ({ name }: { name: string }) => {
   return (
     <Avatar
-      src={avatarUrl}
+      src={'/avatars/' + name + '.jpg'}
       sx={{
         backgroundColor: '#E3F7E8',
         color: '#00871D'
@@ -134,7 +134,6 @@ export const UserSideMenu = () => {
               {...props}
             >
               <UserAvatar
-                avatarUrl={option.avatarUrl}
                 name={option.name}
               />
 
@@ -208,7 +207,6 @@ export const UserSideMenu = () => {
                   }}
                 >
                   <UserAvatar
-                    avatarUrl={u.avatarUrl}
                     name={u.name}
                   />
 
