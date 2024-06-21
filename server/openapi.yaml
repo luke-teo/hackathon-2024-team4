@@ -17,14 +17,20 @@ components:
           type: integer
           minimum: 0
           maximum: 100
-        pastAverageScore:
+        mean:
           type: integer
           minimum: 0
           maximum: 100
+        standardDeviation:
+          type: integer
+        zScore:
+          type: integer
       required:
         - date
         - currentScore
-        - pastAverageScore
+        - mean
+        - standardDeviation
+        - zScore
 
   responses:
     400Error:

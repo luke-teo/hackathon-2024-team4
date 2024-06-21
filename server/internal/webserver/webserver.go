@@ -2,17 +2,16 @@ package webserver
 
 import (
 	"fmt"
-	"go_chi_template/config"
-	"go_chi_template/generated/oapi"
-	"go_chi_template/internal/app/enum"
-	"go_chi_template/internal/webserver/handler"
-	"go_chi_template/internal/webserver/middleware"
 	"log"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
-	// "github.com/go-chi/jwtauth"
+
+	"first_move/config"
+	"first_move/generated/oapi"
+	"first_move/internal/webserver/handler"
+	"first_move/internal/webserver/middleware"
 )
 
 type Webserver struct {
@@ -31,21 +30,9 @@ func NewWebserver(app *config.App) *Webserver {
 	r := chi.NewRouter()
 	r.Use(middleware.NewLoggerMiddleware(app.Logger()))
 	r.Use(chimiddleware.Recoverer)
-	r.Use(app.Sentry().Handle)
-	// r.Use(middleware.NewAuthMiddleware(app))
-	r.Get("/health", handler.GetHealth)
 
 	baseURL := ""
-	serverOptions := oapi.StrictHTTPServerOptions{
-		RequestErrorHandlerFunc: func(w http.ResponseWriter, r *http.Request, err error) {
-			errorEnum := enum.InternalRequestHandlerErrorEnum()
-			middleware.ErrorResponseHandler(app.Logger(), w, r, err, errorEnum.Code)
-		},
-		ResponseErrorHandlerFunc: func(w http.ResponseWriter, r *http.Request, err error) {
-			errorEnum := enum.InternalResponseHandlerErrorEnum()
-			middleware.ErrorResponseHandler(app.Logger(), w, r, err, errorEnum.Code)
-		},
-	}
+	serverOptions := oapi.StrictHTTPServerOptions{}
 	strictHandler := oapi.NewStrictHandlerWithOptions(
 		handler,
 		[]oapi.StrictMiddlewareFunc{},
@@ -59,7 +46,6 @@ func NewWebserver(app *config.App) *Webserver {
 }
 
 func (ws *Webserver) Start() {
-
 	log.Print("WebServer listening on " + ws.serverAddr)
 
 	s := &http.Server{
@@ -78,7 +64,6 @@ func (ws *Webserver) PrintRoutes() {
 			return nil
 		},
 	)
-
 	if err != nil {
 		log.Panicln(err)
 	}

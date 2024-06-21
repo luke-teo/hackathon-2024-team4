@@ -1,11 +1,11 @@
 package main
 
 import (
-	"go_chi_template/config"
-	"go_chi_template/internal/app/task"
-	"go_chi_template/internal/webserver"
-	"log"
+	"fmt"
 	"os"
+
+	"first_move/config"
+	"first_move/internal/console"
 )
 
 func main() {
@@ -14,20 +14,20 @@ func main() {
 		command = os.Args[1]
 	}
 
-	a := config.NewApp()
-
-	if command == "routes:list" {
-		ws := webserver.NewWebserver(a)
-		ws.PrintRoutes()
-		return
+	opts := []string{}
+	if len(os.Args[1:]) > 1 {
+		opts = os.Args[2:]
 	}
 
-	if command == "tenant:cleanup" {
-		err := task.DispatchTenantCleanup(a, os.Args[2])
+  fmt.Println(opts)
 
-		if err != nil {
-			log.Panic(err)
+	app := config.NewApp()
+	c := console.NewConsole(app)
+
+	switch command {
+	case "task:parse_text_chat_from_csv":
+		if err := c.ParseTextChatFromCsv(opts[0]); err != nil {
+			panic(err)
 		}
-		return
 	}
 }

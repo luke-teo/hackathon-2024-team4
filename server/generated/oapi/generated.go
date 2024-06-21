@@ -12,131 +12,48 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-	"time"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/oapi-codegen/runtime"
 	strictnethttp "github.com/oapi-codegen/runtime/strictmiddleware/nethttp"
+	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
-// Defines values for PostApiV1UserJSONBodyRole.
-const (
-	Admin  PostApiV1UserJSONBodyRole = "admin"
-	Normal PostApiV1UserJSONBodyRole = "normal"
-	Super  PostApiV1UserJSONBodyRole = "super"
-)
-
-// Department defines model for Department.
-type Department struct {
-	CustomId  string       `json:"custom_id"`
-	Hierarchy []Department `json:"hierarchy"`
-	Id        string       `json:"id"`
-	Name      string       `json:"name"`
+// Score Summary of user behavior on that day
+type Score struct {
+	CurrentScore     int                `json:"currentScore"`
+	Date             openapi_types.Date `json:"date"`
+	PastAverageScore int                `json:"pastAverageScore"`
 }
 
-// Tenant defines model for Tenant.
-type Tenant struct {
-	CreatedAt *time.Time `json:"createdAt,omitempty"`
-	Id        string     `json:"id"`
-	Name      string     `json:"name"`
-	ShortCode string     `json:"shortCode"`
-	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
-	UserCount *int       `json:"userCount,omitempty"`
+// N400Error defines model for 400Error.
+type N400Error struct {
+	Data         *map[string]interface{} `json:"data"`
+	ErrorCode    string                  `json:"errorCode"`
+	ErrorMessage string                  `json:"errorMessage"`
 }
 
-// TenantCreateValidationError defines model for TenantCreateValidationError.
-type TenantCreateValidationError struct {
-	Name *struct {
-		MaxLen     *string `json:"maxLen,omitempty"`
-		MinLen     *string `json:"minLen,omitempty"`
-		Required   *string `json:"required,omitempty"`
-		UniqueName *string `json:"uniqueName,omitempty"`
-	} `json:"name,omitempty"`
-	ShortCode *struct {
-		AlphaNum        *string `json:"alphaNum,omitempty"`
-		MaxLen          *string `json:"maxLen,omitempty"`
-		MinLen          *string `json:"minLen,omitempty"`
-		Required        *string `json:"required,omitempty"`
-		UniqueShortCode *string `json:"uniqueShortCode,omitempty"`
-	} `json:"shortCode,omitempty"`
+// N500Error defines model for 500Error.
+type N500Error struct {
+	Data         *map[string]interface{} `json:"data"`
+	ErrorCode    string                  `json:"errorCode"`
+	ErrorMessage string                  `json:"errorMessage"`
 }
 
-// User defines model for User.
-type User struct {
-	Email  *string `json:"email,omitempty"`
-	Id     string  `json:"id"`
-	Name   *string `json:"name,omitempty"`
-	Role   *string `json:"role,omitempty"`
-	Tenant *Tenant `json:"tenant,omitempty"`
+// GetScoresByUserIDJSONBody defines parameters for GetScoresByUserID.
+type GetScoresByUserIDJSONBody interface{}
+
+// GetScoresByUserIDParams defines parameters for GetScoresByUserID.
+type GetScoresByUserIDParams struct {
+	// StartDate Start date
+	StartDate openapi_types.Date `form:"startDate" json:"startDate"`
+
+	// EndDate End date
+	EndDate openapi_types.Date `form:"endDate" json:"endDate"`
 }
 
-// UserCreateValidationError defines model for UserCreateValidationError.
-type UserCreateValidationError struct {
-	Email *struct {
-		Email    *string `json:"email,omitempty"`
-		MaxLen   *string `json:"maxLen,omitempty"`
-		Required *string `json:"required,omitempty"`
-	} `json:"email,omitempty"`
-	Name *struct {
-		MaxLen   *string `json:"maxLen,omitempty"`
-		MinLen   *string `json:"minLen,omitempty"`
-		Required *string `json:"required,omitempty"`
-	} `json:"name,omitempty"`
-	Role *struct {
-		InvalidRole *string `json:"invalidRole,omitempty"`
-	} `json:"role,omitempty"`
-	TenantId *struct {
-		TenantExists *string `json:"tenantExists,omitempty"`
-	} `json:"tenantId,omitempty"`
-}
-
-// GetApiV1DepartmentJSONBody defines parameters for GetApiV1Department.
-type GetApiV1DepartmentJSONBody struct {
-	Search *string `json:"search"`
-}
-
-// PostApiV1TenantJSONBody defines parameters for PostApiV1Tenant.
-type PostApiV1TenantJSONBody struct {
-	Name      string `json:"name"`
-	ShortCode string `json:"shortCode"`
-}
-
-// PatchApiV1TenantTenantIdJSONBody defines parameters for PatchApiV1TenantTenantId.
-type PatchApiV1TenantTenantIdJSONBody struct {
-	Name     string `json:"name"`
-	TenantId string `json:"tenantId"`
-}
-
-// GetApiV1UserJSONBody defines parameters for GetApiV1User.
-type GetApiV1UserJSONBody struct {
-	TenantId string `json:"tenantId"`
-}
-
-// PostApiV1UserJSONBody defines parameters for PostApiV1User.
-type PostApiV1UserJSONBody struct {
-	Email    string                    `json:"email"`
-	Name     *string                   `json:"name"`
-	Role     PostApiV1UserJSONBodyRole `json:"role"`
-	TenantId string                    `json:"tenantId"`
-}
-
-// PostApiV1UserJSONBodyRole defines parameters for PostApiV1User.
-type PostApiV1UserJSONBodyRole string
-
-// GetApiV1DepartmentJSONRequestBody defines body for GetApiV1Department for application/json ContentType.
-type GetApiV1DepartmentJSONRequestBody GetApiV1DepartmentJSONBody
-
-// PostApiV1TenantJSONRequestBody defines body for PostApiV1Tenant for application/json ContentType.
-type PostApiV1TenantJSONRequestBody PostApiV1TenantJSONBody
-
-// PatchApiV1TenantTenantIdJSONRequestBody defines body for PatchApiV1TenantTenantId for application/json ContentType.
-type PatchApiV1TenantTenantIdJSONRequestBody PatchApiV1TenantTenantIdJSONBody
-
-// GetApiV1UserJSONRequestBody defines body for GetApiV1User for application/json ContentType.
-type GetApiV1UserJSONRequestBody GetApiV1UserJSONBody
-
-// PostApiV1UserJSONRequestBody defines body for PostApiV1User for application/json ContentType.
-type PostApiV1UserJSONRequestBody PostApiV1UserJSONBody
+// GetScoresByUserIDJSONRequestBody defines body for GetScoresByUserID for application/json ContentType.
+type GetScoresByUserIDJSONRequestBody GetScoresByUserIDJSONBody
 
 // RequestEditorFn  is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -211,43 +128,14 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 
 // The interface specification for the client above.
 type ClientInterface interface {
-	// GetApiV1DepartmentWithBody request with any body
-	GetApiV1DepartmentWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	// GetScoresByUserIDWithBody request with any body
+	GetScoresByUserIDWithBody(ctx context.Context, userId string, params *GetScoresByUserIDParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
 
-	GetApiV1Department(ctx context.Context, body GetApiV1DepartmentJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetApiV1Tenant request
-	GetApiV1Tenant(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// PostApiV1TenantWithBody request with any body
-	PostApiV1TenantWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	PostApiV1Tenant(ctx context.Context, body PostApiV1TenantJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetApiV1TenantTenantId request
-	GetApiV1TenantTenantId(ctx context.Context, tenantId string, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// PatchApiV1TenantTenantIdWithBody request with any body
-	PatchApiV1TenantTenantIdWithBody(ctx context.Context, tenantId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	PatchApiV1TenantTenantId(ctx context.Context, tenantId string, body PatchApiV1TenantTenantIdJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetApiV1UserWithBody request with any body
-	GetApiV1UserWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	GetApiV1User(ctx context.Context, body GetApiV1UserJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// PostApiV1UserWithBody request with any body
-	PostApiV1UserWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	PostApiV1User(ctx context.Context, body PostApiV1UserJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
-
-	// GetApiV1UserUserIdWithBody request with any body
-	GetApiV1UserUserIdWithBody(ctx context.Context, userId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+	GetScoresByUserID(ctx context.Context, userId string, params *GetScoresByUserIDParams, body GetScoresByUserIDJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
-func (c *Client) GetApiV1DepartmentWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetApiV1DepartmentRequestWithBody(c.Server, contentType, body)
+func (c *Client) GetScoresByUserIDWithBody(ctx context.Context, userId string, params *GetScoresByUserIDParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetScoresByUserIDRequestWithBody(c.Server, userId, params, contentType, body)
 	if err != nil {
 		return nil, err
 	}
@@ -258,8 +146,8 @@ func (c *Client) GetApiV1DepartmentWithBody(ctx context.Context, contentType str
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetApiV1Department(ctx context.Context, body GetApiV1DepartmentJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetApiV1DepartmentRequest(c.Server, body)
+func (c *Client) GetScoresByUserID(ctx context.Context, userId string, params *GetScoresByUserIDParams, body GetScoresByUserIDJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetScoresByUserIDRequest(c.Server, userId, params, body)
 	if err != nil {
 		return nil, err
 	}
@@ -270,408 +158,19 @@ func (c *Client) GetApiV1Department(ctx context.Context, body GetApiV1Department
 	return c.Client.Do(req)
 }
 
-func (c *Client) GetApiV1Tenant(ctx context.Context, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetApiV1TenantRequest(c.Server)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) PostApiV1TenantWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPostApiV1TenantRequestWithBody(c.Server, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) PostApiV1Tenant(ctx context.Context, body PostApiV1TenantJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPostApiV1TenantRequest(c.Server, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetApiV1TenantTenantId(ctx context.Context, tenantId string, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetApiV1TenantTenantIdRequest(c.Server, tenantId)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) PatchApiV1TenantTenantIdWithBody(ctx context.Context, tenantId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPatchApiV1TenantTenantIdRequestWithBody(c.Server, tenantId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) PatchApiV1TenantTenantId(ctx context.Context, tenantId string, body PatchApiV1TenantTenantIdJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPatchApiV1TenantTenantIdRequest(c.Server, tenantId, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetApiV1UserWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetApiV1UserRequestWithBody(c.Server, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetApiV1User(ctx context.Context, body GetApiV1UserJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetApiV1UserRequest(c.Server, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) PostApiV1UserWithBody(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPostApiV1UserRequestWithBody(c.Server, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) PostApiV1User(ctx context.Context, body PostApiV1UserJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewPostApiV1UserRequest(c.Server, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-func (c *Client) GetApiV1UserUserIdWithBody(ctx context.Context, userId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
-	req, err := NewGetApiV1UserUserIdRequestWithBody(c.Server, userId, contentType, body)
-	if err != nil {
-		return nil, err
-	}
-	req = req.WithContext(ctx)
-	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
-		return nil, err
-	}
-	return c.Client.Do(req)
-}
-
-// NewGetApiV1DepartmentRequest calls the generic GetApiV1Department builder with application/json body
-func NewGetApiV1DepartmentRequest(server string, body GetApiV1DepartmentJSONRequestBody) (*http.Request, error) {
+// NewGetScoresByUserIDRequest calls the generic GetScoresByUserID builder with application/json body
+func NewGetScoresByUserIDRequest(server string, userId string, params *GetScoresByUserIDParams, body GetScoresByUserIDJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
 	buf, err := json.Marshal(body)
 	if err != nil {
 		return nil, err
 	}
 	bodyReader = bytes.NewReader(buf)
-	return NewGetApiV1DepartmentRequestWithBody(server, "application/json", bodyReader)
+	return NewGetScoresByUserIDRequestWithBody(server, userId, params, "application/json", bodyReader)
 }
 
-// NewGetApiV1DepartmentRequestWithBody generates requests for GetApiV1Department with any type of body
-func NewGetApiV1DepartmentRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/api/v1/department")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewGetApiV1TenantRequest generates requests for GetApiV1Tenant
-func NewGetApiV1TenantRequest(server string) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/api/v1/tenant")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewPostApiV1TenantRequest calls the generic PostApiV1Tenant builder with application/json body
-func NewPostApiV1TenantRequest(server string, body PostApiV1TenantJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewPostApiV1TenantRequestWithBody(server, "application/json", bodyReader)
-}
-
-// NewPostApiV1TenantRequestWithBody generates requests for PostApiV1Tenant with any type of body
-func NewPostApiV1TenantRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/api/v1/tenant")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("POST", queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewGetApiV1TenantTenantIdRequest generates requests for GetApiV1TenantTenantId
-func NewGetApiV1TenantTenantIdRequest(server string, tenantId string) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "tenantId", runtime.ParamLocationPath, tenantId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/api/v1/tenant/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-
-	return req, nil
-}
-
-// NewPatchApiV1TenantTenantIdRequest calls the generic PatchApiV1TenantTenantId builder with application/json body
-func NewPatchApiV1TenantTenantIdRequest(server string, tenantId string, body PatchApiV1TenantTenantIdJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewPatchApiV1TenantTenantIdRequestWithBody(server, tenantId, "application/json", bodyReader)
-}
-
-// NewPatchApiV1TenantTenantIdRequestWithBody generates requests for PatchApiV1TenantTenantId with any type of body
-func NewPatchApiV1TenantTenantIdRequestWithBody(server string, tenantId string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	var pathParam0 string
-
-	pathParam0, err = runtime.StyleParamWithLocation("simple", false, "tenantId", runtime.ParamLocationPath, tenantId)
-	if err != nil {
-		return nil, err
-	}
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/api/v1/tenant/%s", pathParam0)
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("PATCH", queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewGetApiV1UserRequest calls the generic GetApiV1User builder with application/json body
-func NewGetApiV1UserRequest(server string, body GetApiV1UserJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewGetApiV1UserRequestWithBody(server, "application/json", bodyReader)
-}
-
-// NewGetApiV1UserRequestWithBody generates requests for GetApiV1User with any type of body
-func NewGetApiV1UserRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/api/v1/user")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("GET", queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewPostApiV1UserRequest calls the generic PostApiV1User builder with application/json body
-func NewPostApiV1UserRequest(server string, body PostApiV1UserJSONRequestBody) (*http.Request, error) {
-	var bodyReader io.Reader
-	buf, err := json.Marshal(body)
-	if err != nil {
-		return nil, err
-	}
-	bodyReader = bytes.NewReader(buf)
-	return NewPostApiV1UserRequestWithBody(server, "application/json", bodyReader)
-}
-
-// NewPostApiV1UserRequestWithBody generates requests for PostApiV1User with any type of body
-func NewPostApiV1UserRequestWithBody(server string, contentType string, body io.Reader) (*http.Request, error) {
-	var err error
-
-	serverURL, err := url.Parse(server)
-	if err != nil {
-		return nil, err
-	}
-
-	operationPath := fmt.Sprintf("/api/v1/user")
-	if operationPath[0] == '/' {
-		operationPath = "." + operationPath
-	}
-
-	queryURL, err := serverURL.Parse(operationPath)
-	if err != nil {
-		return nil, err
-	}
-
-	req, err := http.NewRequest("POST", queryURL.String(), body)
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Add("Content-Type", contentType)
-
-	return req, nil
-}
-
-// NewGetApiV1UserUserIdRequestWithBody generates requests for GetApiV1UserUserId with any type of body
-func NewGetApiV1UserUserIdRequestWithBody(server string, userId string, contentType string, body io.Reader) (*http.Request, error) {
+// NewGetScoresByUserIDRequestWithBody generates requests for GetScoresByUserID with any type of body
+func NewGetScoresByUserIDRequestWithBody(server string, userId string, params *GetScoresByUserIDParams, contentType string, body io.Reader) (*http.Request, error) {
 	var err error
 
 	var pathParam0 string
@@ -686,7 +185,7 @@ func NewGetApiV1UserUserIdRequestWithBody(server string, userId string, contentT
 		return nil, err
 	}
 
-	operationPath := fmt.Sprintf("/api/v1/user/%s", pathParam0)
+	operationPath := fmt.Sprintf("/scores/%s", pathParam0)
 	if operationPath[0] == '/' {
 		operationPath = "." + operationPath
 	}
@@ -694,6 +193,36 @@ func NewGetApiV1UserUserIdRequestWithBody(server string, userId string, contentT
 	queryURL, err := serverURL.Parse(operationPath)
 	if err != nil {
 		return nil, err
+	}
+
+	if params != nil {
+		queryValues := queryURL.Query()
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "startDate", runtime.ParamLocationQuery, params.StartDate); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+		if queryFrag, err := runtime.StyleParamWithLocation("form", true, "endDate", runtime.ParamLocationQuery, params.EndDate); err != nil {
+			return nil, err
+		} else if parsed, err := url.ParseQuery(queryFrag); err != nil {
+			return nil, err
+		} else {
+			for k, v := range parsed {
+				for _, v2 := range v {
+					queryValues.Add(k, v2)
+				}
+			}
+		}
+
+		queryURL.RawQuery = queryValues.Encode()
 	}
 
 	req, err := http.NewRequest("GET", queryURL.String(), body)
@@ -749,51 +278,25 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
-	// GetApiV1DepartmentWithBodyWithResponse request with any body
-	GetApiV1DepartmentWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*GetApiV1DepartmentResponse, error)
+	// GetScoresByUserIDWithBodyWithResponse request with any body
+	GetScoresByUserIDWithBodyWithResponse(ctx context.Context, userId string, params *GetScoresByUserIDParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*GetScoresByUserIDResponse, error)
 
-	GetApiV1DepartmentWithResponse(ctx context.Context, body GetApiV1DepartmentJSONRequestBody, reqEditors ...RequestEditorFn) (*GetApiV1DepartmentResponse, error)
-
-	// GetApiV1TenantWithResponse request
-	GetApiV1TenantWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetApiV1TenantResponse, error)
-
-	// PostApiV1TenantWithBodyWithResponse request with any body
-	PostApiV1TenantWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostApiV1TenantResponse, error)
-
-	PostApiV1TenantWithResponse(ctx context.Context, body PostApiV1TenantJSONRequestBody, reqEditors ...RequestEditorFn) (*PostApiV1TenantResponse, error)
-
-	// GetApiV1TenantTenantIdWithResponse request
-	GetApiV1TenantTenantIdWithResponse(ctx context.Context, tenantId string, reqEditors ...RequestEditorFn) (*GetApiV1TenantTenantIdResponse, error)
-
-	// PatchApiV1TenantTenantIdWithBodyWithResponse request with any body
-	PatchApiV1TenantTenantIdWithBodyWithResponse(ctx context.Context, tenantId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PatchApiV1TenantTenantIdResponse, error)
-
-	PatchApiV1TenantTenantIdWithResponse(ctx context.Context, tenantId string, body PatchApiV1TenantTenantIdJSONRequestBody, reqEditors ...RequestEditorFn) (*PatchApiV1TenantTenantIdResponse, error)
-
-	// GetApiV1UserWithBodyWithResponse request with any body
-	GetApiV1UserWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*GetApiV1UserResponse, error)
-
-	GetApiV1UserWithResponse(ctx context.Context, body GetApiV1UserJSONRequestBody, reqEditors ...RequestEditorFn) (*GetApiV1UserResponse, error)
-
-	// PostApiV1UserWithBodyWithResponse request with any body
-	PostApiV1UserWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostApiV1UserResponse, error)
-
-	PostApiV1UserWithResponse(ctx context.Context, body PostApiV1UserJSONRequestBody, reqEditors ...RequestEditorFn) (*PostApiV1UserResponse, error)
-
-	// GetApiV1UserUserIdWithBodyWithResponse request with any body
-	GetApiV1UserUserIdWithBodyWithResponse(ctx context.Context, userId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*GetApiV1UserUserIdResponse, error)
+	GetScoresByUserIDWithResponse(ctx context.Context, userId string, params *GetScoresByUserIDParams, body GetScoresByUserIDJSONRequestBody, reqEditors ...RequestEditorFn) (*GetScoresByUserIDResponse, error)
 }
 
-type GetApiV1DepartmentResponse struct {
+type GetScoresByUserIDResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
 	JSON200      *struct {
-		Departments []Department `json:"departments"`
+		Scores []Score `json:"scores"`
+		UserId string  `json:"userId"`
 	}
+	JSON400 *N400Error
+	JSON500 *N500Error
 }
 
 // Status returns HTTPResponse.Status
-func (r GetApiV1DepartmentResponse) Status() string {
+func (r GetScoresByUserIDResponse) Status() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Status
 	}
@@ -801,318 +304,39 @@ func (r GetApiV1DepartmentResponse) Status() string {
 }
 
 // StatusCode returns HTTPResponse.StatusCode
-func (r GetApiV1DepartmentResponse) StatusCode() int {
+func (r GetScoresByUserIDResponse) StatusCode() int {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.StatusCode
 	}
 	return 0
 }
 
-type GetApiV1TenantResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *struct {
-		Tenants []Tenant `json:"tenants"`
-	}
-}
-
-// Status returns HTTPResponse.Status
-func (r GetApiV1TenantResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetApiV1TenantResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type PostApiV1TenantResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *struct {
-		Tenant Tenant `json:"tenant"`
-	}
-	JSON400 *struct {
-		Data         TenantCreateValidationError `json:"data"`
-		ErrorCode    string                      `json:"errorCode"`
-		ErrorMessage string                      `json:"errorMessage"`
-	}
-}
-
-// Status returns HTTPResponse.Status
-func (r PostApiV1TenantResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r PostApiV1TenantResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetApiV1TenantTenantIdResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *struct {
-		Tenant Tenant `json:"tenant"`
-	}
-	JSON404 *struct {
-		Message string `json:"message"`
-	}
-}
-
-// Status returns HTTPResponse.Status
-func (r GetApiV1TenantTenantIdResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetApiV1TenantTenantIdResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type PatchApiV1TenantTenantIdResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *struct {
-		Tenant *Tenant `json:"tenant,omitempty"`
-	}
-}
-
-// Status returns HTTPResponse.Status
-func (r PatchApiV1TenantTenantIdResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r PatchApiV1TenantTenantIdResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetApiV1UserResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *struct {
-		Users []User `json:"users"`
-	}
-}
-
-// Status returns HTTPResponse.Status
-func (r GetApiV1UserResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetApiV1UserResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type PostApiV1UserResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *struct {
-		User User `json:"user"`
-	}
-	JSON400 *struct {
-		Data         UserCreateValidationError `json:"data"`
-		ErrorCode    string                    `json:"errorCode"`
-		ErrorMessage string                    `json:"errorMessage"`
-	}
-}
-
-// Status returns HTTPResponse.Status
-func (r PostApiV1UserResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r PostApiV1UserResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-type GetApiV1UserUserIdResponse struct {
-	Body         []byte
-	HTTPResponse *http.Response
-	JSON200      *struct {
-		User User `json:"user"`
-	}
-	JSON404 *struct {
-		Message string `json:"message"`
-	}
-}
-
-// Status returns HTTPResponse.Status
-func (r GetApiV1UserUserIdResponse) Status() string {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.Status
-	}
-	return http.StatusText(0)
-}
-
-// StatusCode returns HTTPResponse.StatusCode
-func (r GetApiV1UserUserIdResponse) StatusCode() int {
-	if r.HTTPResponse != nil {
-		return r.HTTPResponse.StatusCode
-	}
-	return 0
-}
-
-// GetApiV1DepartmentWithBodyWithResponse request with arbitrary body returning *GetApiV1DepartmentResponse
-func (c *ClientWithResponses) GetApiV1DepartmentWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*GetApiV1DepartmentResponse, error) {
-	rsp, err := c.GetApiV1DepartmentWithBody(ctx, contentType, body, reqEditors...)
+// GetScoresByUserIDWithBodyWithResponse request with arbitrary body returning *GetScoresByUserIDResponse
+func (c *ClientWithResponses) GetScoresByUserIDWithBodyWithResponse(ctx context.Context, userId string, params *GetScoresByUserIDParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*GetScoresByUserIDResponse, error) {
+	rsp, err := c.GetScoresByUserIDWithBody(ctx, userId, params, contentType, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseGetApiV1DepartmentResponse(rsp)
+	return ParseGetScoresByUserIDResponse(rsp)
 }
 
-func (c *ClientWithResponses) GetApiV1DepartmentWithResponse(ctx context.Context, body GetApiV1DepartmentJSONRequestBody, reqEditors ...RequestEditorFn) (*GetApiV1DepartmentResponse, error) {
-	rsp, err := c.GetApiV1Department(ctx, body, reqEditors...)
+func (c *ClientWithResponses) GetScoresByUserIDWithResponse(ctx context.Context, userId string, params *GetScoresByUserIDParams, body GetScoresByUserIDJSONRequestBody, reqEditors ...RequestEditorFn) (*GetScoresByUserIDResponse, error) {
+	rsp, err := c.GetScoresByUserID(ctx, userId, params, body, reqEditors...)
 	if err != nil {
 		return nil, err
 	}
-	return ParseGetApiV1DepartmentResponse(rsp)
+	return ParseGetScoresByUserIDResponse(rsp)
 }
 
-// GetApiV1TenantWithResponse request returning *GetApiV1TenantResponse
-func (c *ClientWithResponses) GetApiV1TenantWithResponse(ctx context.Context, reqEditors ...RequestEditorFn) (*GetApiV1TenantResponse, error) {
-	rsp, err := c.GetApiV1Tenant(ctx, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetApiV1TenantResponse(rsp)
-}
-
-// PostApiV1TenantWithBodyWithResponse request with arbitrary body returning *PostApiV1TenantResponse
-func (c *ClientWithResponses) PostApiV1TenantWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostApiV1TenantResponse, error) {
-	rsp, err := c.PostApiV1TenantWithBody(ctx, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParsePostApiV1TenantResponse(rsp)
-}
-
-func (c *ClientWithResponses) PostApiV1TenantWithResponse(ctx context.Context, body PostApiV1TenantJSONRequestBody, reqEditors ...RequestEditorFn) (*PostApiV1TenantResponse, error) {
-	rsp, err := c.PostApiV1Tenant(ctx, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParsePostApiV1TenantResponse(rsp)
-}
-
-// GetApiV1TenantTenantIdWithResponse request returning *GetApiV1TenantTenantIdResponse
-func (c *ClientWithResponses) GetApiV1TenantTenantIdWithResponse(ctx context.Context, tenantId string, reqEditors ...RequestEditorFn) (*GetApiV1TenantTenantIdResponse, error) {
-	rsp, err := c.GetApiV1TenantTenantId(ctx, tenantId, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetApiV1TenantTenantIdResponse(rsp)
-}
-
-// PatchApiV1TenantTenantIdWithBodyWithResponse request with arbitrary body returning *PatchApiV1TenantTenantIdResponse
-func (c *ClientWithResponses) PatchApiV1TenantTenantIdWithBodyWithResponse(ctx context.Context, tenantId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PatchApiV1TenantTenantIdResponse, error) {
-	rsp, err := c.PatchApiV1TenantTenantIdWithBody(ctx, tenantId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParsePatchApiV1TenantTenantIdResponse(rsp)
-}
-
-func (c *ClientWithResponses) PatchApiV1TenantTenantIdWithResponse(ctx context.Context, tenantId string, body PatchApiV1TenantTenantIdJSONRequestBody, reqEditors ...RequestEditorFn) (*PatchApiV1TenantTenantIdResponse, error) {
-	rsp, err := c.PatchApiV1TenantTenantId(ctx, tenantId, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParsePatchApiV1TenantTenantIdResponse(rsp)
-}
-
-// GetApiV1UserWithBodyWithResponse request with arbitrary body returning *GetApiV1UserResponse
-func (c *ClientWithResponses) GetApiV1UserWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*GetApiV1UserResponse, error) {
-	rsp, err := c.GetApiV1UserWithBody(ctx, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetApiV1UserResponse(rsp)
-}
-
-func (c *ClientWithResponses) GetApiV1UserWithResponse(ctx context.Context, body GetApiV1UserJSONRequestBody, reqEditors ...RequestEditorFn) (*GetApiV1UserResponse, error) {
-	rsp, err := c.GetApiV1User(ctx, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetApiV1UserResponse(rsp)
-}
-
-// PostApiV1UserWithBodyWithResponse request with arbitrary body returning *PostApiV1UserResponse
-func (c *ClientWithResponses) PostApiV1UserWithBodyWithResponse(ctx context.Context, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PostApiV1UserResponse, error) {
-	rsp, err := c.PostApiV1UserWithBody(ctx, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParsePostApiV1UserResponse(rsp)
-}
-
-func (c *ClientWithResponses) PostApiV1UserWithResponse(ctx context.Context, body PostApiV1UserJSONRequestBody, reqEditors ...RequestEditorFn) (*PostApiV1UserResponse, error) {
-	rsp, err := c.PostApiV1User(ctx, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParsePostApiV1UserResponse(rsp)
-}
-
-// GetApiV1UserUserIdWithBodyWithResponse request with arbitrary body returning *GetApiV1UserUserIdResponse
-func (c *ClientWithResponses) GetApiV1UserUserIdWithBodyWithResponse(ctx context.Context, userId string, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*GetApiV1UserUserIdResponse, error) {
-	rsp, err := c.GetApiV1UserUserIdWithBody(ctx, userId, contentType, body, reqEditors...)
-	if err != nil {
-		return nil, err
-	}
-	return ParseGetApiV1UserUserIdResponse(rsp)
-}
-
-// ParseGetApiV1DepartmentResponse parses an HTTP response from a GetApiV1DepartmentWithResponse call
-func ParseGetApiV1DepartmentResponse(rsp *http.Response) (*GetApiV1DepartmentResponse, error) {
+// ParseGetScoresByUserIDResponse parses an HTTP response from a GetScoresByUserIDWithResponse call
+func ParseGetScoresByUserIDResponse(rsp *http.Response) (*GetScoresByUserIDResponse, error) {
 	bodyBytes, err := io.ReadAll(rsp.Body)
 	defer func() { _ = rsp.Body.Close() }()
 	if err != nil {
 		return nil, err
 	}
 
-	response := &GetApiV1DepartmentResponse{
+	response := &GetScoresByUserIDResponse{
 		Body:         bodyBytes,
 		HTTPResponse: rsp,
 	}
@@ -1120,63 +344,8 @@ func ParseGetApiV1DepartmentResponse(rsp *http.Response) (*GetApiV1DepartmentRes
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
 		var dest struct {
-			Departments []Department `json:"departments"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseGetApiV1TenantResponse parses an HTTP response from a GetApiV1TenantWithResponse call
-func ParseGetApiV1TenantResponse(rsp *http.Response) (*GetApiV1TenantResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetApiV1TenantResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest struct {
-			Tenants []Tenant `json:"tenants"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParsePostApiV1TenantResponse parses an HTTP response from a PostApiV1TenantWithResponse call
-func ParsePostApiV1TenantResponse(rsp *http.Response) (*PostApiV1TenantResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &PostApiV1TenantResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest struct {
-			Tenant Tenant `json:"tenant"`
+			Scores []Score `json:"scores"`
+			UserId string  `json:"userId"`
 		}
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
@@ -1184,184 +353,18 @@ func ParsePostApiV1TenantResponse(rsp *http.Response) (*PostApiV1TenantResponse,
 		response.JSON200 = &dest
 
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
-		var dest struct {
-			Data         TenantCreateValidationError `json:"data"`
-			ErrorCode    string                      `json:"errorCode"`
-			ErrorMessage string                      `json:"errorMessage"`
-		}
+		var dest N400Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
 		response.JSON400 = &dest
 
-	}
-
-	return response, nil
-}
-
-// ParseGetApiV1TenantTenantIdResponse parses an HTTP response from a GetApiV1TenantTenantIdWithResponse call
-func ParseGetApiV1TenantTenantIdResponse(rsp *http.Response) (*GetApiV1TenantTenantIdResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetApiV1TenantTenantIdResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest struct {
-			Tenant Tenant `json:"tenant"`
-		}
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 500:
+		var dest N500Error
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest struct {
-			Message string `json:"message"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON404 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParsePatchApiV1TenantTenantIdResponse parses an HTTP response from a PatchApiV1TenantTenantIdWithResponse call
-func ParsePatchApiV1TenantTenantIdResponse(rsp *http.Response) (*PatchApiV1TenantTenantIdResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &PatchApiV1TenantTenantIdResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest struct {
-			Tenant *Tenant `json:"tenant,omitempty"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseGetApiV1UserResponse parses an HTTP response from a GetApiV1UserWithResponse call
-func ParseGetApiV1UserResponse(rsp *http.Response) (*GetApiV1UserResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetApiV1UserResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest struct {
-			Users []User `json:"users"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParsePostApiV1UserResponse parses an HTTP response from a PostApiV1UserWithResponse call
-func ParsePostApiV1UserResponse(rsp *http.Response) (*PostApiV1UserResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &PostApiV1UserResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest struct {
-			User User `json:"user"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
-		var dest struct {
-			Data         UserCreateValidationError `json:"data"`
-			ErrorCode    string                    `json:"errorCode"`
-			ErrorMessage string                    `json:"errorMessage"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON400 = &dest
-
-	}
-
-	return response, nil
-}
-
-// ParseGetApiV1UserUserIdResponse parses an HTTP response from a GetApiV1UserUserIdWithResponse call
-func ParseGetApiV1UserUserIdResponse(rsp *http.Response) (*GetApiV1UserUserIdResponse, error) {
-	bodyBytes, err := io.ReadAll(rsp.Body)
-	defer func() { _ = rsp.Body.Close() }()
-	if err != nil {
-		return nil, err
-	}
-
-	response := &GetApiV1UserUserIdResponse{
-		Body:         bodyBytes,
-		HTTPResponse: rsp,
-	}
-
-	switch {
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest struct {
-			User User `json:"user"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON200 = &dest
-
-	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
-		var dest struct {
-			Message string `json:"message"`
-		}
-		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
-			return nil, err
-		}
-		response.JSON404 = &dest
+		response.JSON500 = &dest
 
 	}
 
@@ -1370,77 +373,16 @@ func ParseGetApiV1UserUserIdResponse(rsp *http.Response) (*GetApiV1UserUserIdRes
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
-	// Your GET endpoint
-	// (GET /api/v1/department)
-	GetApiV1Department(w http.ResponseWriter, r *http.Request)
-
-	// (GET /api/v1/tenant)
-	GetApiV1Tenant(w http.ResponseWriter, r *http.Request)
-
-	// (POST /api/v1/tenant)
-	PostApiV1Tenant(w http.ResponseWriter, r *http.Request)
-	// Get Tenant By ID
-	// (GET /api/v1/tenant/{tenantId})
-	GetApiV1TenantTenantId(w http.ResponseWriter, r *http.Request, tenantId string)
-
-	// (PATCH /api/v1/tenant/{tenantId})
-	PatchApiV1TenantTenantId(w http.ResponseWriter, r *http.Request, tenantId string)
-	// Get all users
-	// (GET /api/v1/user)
-	GetApiV1User(w http.ResponseWriter, r *http.Request)
-
-	// (POST /api/v1/user)
-	PostApiV1User(w http.ResponseWriter, r *http.Request)
-	// Get User By ID
-	// (GET /api/v1/user/{userId})
-	GetApiV1UserUserId(w http.ResponseWriter, r *http.Request, userId string)
+	// (GET /scores/{userId})
+	GetScoresByUserID(w http.ResponseWriter, r *http.Request, userId string, params GetScoresByUserIDParams)
 }
 
 // Unimplemented server implementation that returns http.StatusNotImplemented for each endpoint.
 
 type Unimplemented struct{}
 
-// Your GET endpoint
-// (GET /api/v1/department)
-func (_ Unimplemented) GetApiV1Department(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotImplemented)
-}
-
-// (GET /api/v1/tenant)
-func (_ Unimplemented) GetApiV1Tenant(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotImplemented)
-}
-
-// (POST /api/v1/tenant)
-func (_ Unimplemented) PostApiV1Tenant(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotImplemented)
-}
-
-// Get Tenant By ID
-// (GET /api/v1/tenant/{tenantId})
-func (_ Unimplemented) GetApiV1TenantTenantId(w http.ResponseWriter, r *http.Request, tenantId string) {
-	w.WriteHeader(http.StatusNotImplemented)
-}
-
-// (PATCH /api/v1/tenant/{tenantId})
-func (_ Unimplemented) PatchApiV1TenantTenantId(w http.ResponseWriter, r *http.Request, tenantId string) {
-	w.WriteHeader(http.StatusNotImplemented)
-}
-
-// Get all users
-// (GET /api/v1/user)
-func (_ Unimplemented) GetApiV1User(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotImplemented)
-}
-
-// (POST /api/v1/user)
-func (_ Unimplemented) PostApiV1User(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotImplemented)
-}
-
-// Get User By ID
-// (GET /api/v1/user/{userId})
-func (_ Unimplemented) GetApiV1UserUserId(w http.ResponseWriter, r *http.Request, userId string) {
+// (GET /scores/{userId})
+func (_ Unimplemented) GetScoresByUserID(w http.ResponseWriter, r *http.Request, userId string, params GetScoresByUserIDParams) {
 	w.WriteHeader(http.StatusNotImplemented)
 }
 
@@ -1453,135 +395,8 @@ type ServerInterfaceWrapper struct {
 
 type MiddlewareFunc func(http.Handler) http.Handler
 
-// GetApiV1Department operation middleware
-func (siw *ServerInterfaceWrapper) GetApiV1Department(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-
-	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetApiV1Department(w, r)
-	}))
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		handler = middleware(handler)
-	}
-
-	handler.ServeHTTP(w, r.WithContext(ctx))
-}
-
-// GetApiV1Tenant operation middleware
-func (siw *ServerInterfaceWrapper) GetApiV1Tenant(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-
-	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetApiV1Tenant(w, r)
-	}))
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		handler = middleware(handler)
-	}
-
-	handler.ServeHTTP(w, r.WithContext(ctx))
-}
-
-// PostApiV1Tenant operation middleware
-func (siw *ServerInterfaceWrapper) PostApiV1Tenant(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-
-	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PostApiV1Tenant(w, r)
-	}))
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		handler = middleware(handler)
-	}
-
-	handler.ServeHTTP(w, r.WithContext(ctx))
-}
-
-// GetApiV1TenantTenantId operation middleware
-func (siw *ServerInterfaceWrapper) GetApiV1TenantTenantId(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-
-	var err error
-
-	// ------------- Path parameter "tenantId" -------------
-	var tenantId string
-
-	err = runtime.BindStyledParameterWithOptions("simple", "tenantId", chi.URLParam(r, "tenantId"), &tenantId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "tenantId", Err: err})
-		return
-	}
-
-	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetApiV1TenantTenantId(w, r, tenantId)
-	}))
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		handler = middleware(handler)
-	}
-
-	handler.ServeHTTP(w, r.WithContext(ctx))
-}
-
-// PatchApiV1TenantTenantId operation middleware
-func (siw *ServerInterfaceWrapper) PatchApiV1TenantTenantId(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-
-	var err error
-
-	// ------------- Path parameter "tenantId" -------------
-	var tenantId string
-
-	err = runtime.BindStyledParameterWithOptions("simple", "tenantId", chi.URLParam(r, "tenantId"), &tenantId, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationPath, Explode: false, Required: true})
-	if err != nil {
-		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "tenantId", Err: err})
-		return
-	}
-
-	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PatchApiV1TenantTenantId(w, r, tenantId)
-	}))
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		handler = middleware(handler)
-	}
-
-	handler.ServeHTTP(w, r.WithContext(ctx))
-}
-
-// GetApiV1User operation middleware
-func (siw *ServerInterfaceWrapper) GetApiV1User(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-
-	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetApiV1User(w, r)
-	}))
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		handler = middleware(handler)
-	}
-
-	handler.ServeHTTP(w, r.WithContext(ctx))
-}
-
-// PostApiV1User operation middleware
-func (siw *ServerInterfaceWrapper) PostApiV1User(w http.ResponseWriter, r *http.Request) {
-	ctx := r.Context()
-
-	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PostApiV1User(w, r)
-	}))
-
-	for _, middleware := range siw.HandlerMiddlewares {
-		handler = middleware(handler)
-	}
-
-	handler.ServeHTTP(w, r.WithContext(ctx))
-}
-
-// GetApiV1UserUserId operation middleware
-func (siw *ServerInterfaceWrapper) GetApiV1UserUserId(w http.ResponseWriter, r *http.Request) {
+// GetScoresByUserID operation middleware
+func (siw *ServerInterfaceWrapper) GetScoresByUserID(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	var err error
@@ -1595,8 +410,39 @@ func (siw *ServerInterfaceWrapper) GetApiV1UserUserId(w http.ResponseWriter, r *
 		return
 	}
 
+	// Parameter object where we will unmarshal all parameters from the context
+	var params GetScoresByUserIDParams
+
+	// ------------- Required query parameter "startDate" -------------
+
+	if paramValue := r.URL.Query().Get("startDate"); paramValue != "" {
+	} else {
+		siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "startDate"})
+		return
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "startDate", r.URL.Query(), &params.StartDate)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "startDate", Err: err})
+		return
+	}
+
+	// ------------- Required query parameter "endDate" -------------
+
+	if paramValue := r.URL.Query().Get("endDate"); paramValue != "" {
+	} else {
+		siw.ErrorHandlerFunc(w, r, &RequiredParamError{ParamName: "endDate"})
+		return
+	}
+
+	err = runtime.BindQueryParameter("form", true, true, "endDate", r.URL.Query(), &params.EndDate)
+	if err != nil {
+		siw.ErrorHandlerFunc(w, r, &InvalidParamFormatError{ParamName: "endDate", Err: err})
+		return
+	}
+
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.GetApiV1UserUserId(w, r, userId)
+		siw.Handler.GetScoresByUserID(w, r, userId, params)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -1720,263 +566,74 @@ func HandlerWithOptions(si ServerInterface, options ChiServerOptions) http.Handl
 	}
 
 	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/api/v1/department", wrapper.GetApiV1Department)
-	})
-	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/api/v1/tenant", wrapper.GetApiV1Tenant)
-	})
-	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/api/v1/tenant", wrapper.PostApiV1Tenant)
-	})
-	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/api/v1/tenant/{tenantId}", wrapper.GetApiV1TenantTenantId)
-	})
-	r.Group(func(r chi.Router) {
-		r.Patch(options.BaseURL+"/api/v1/tenant/{tenantId}", wrapper.PatchApiV1TenantTenantId)
-	})
-	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/api/v1/user", wrapper.GetApiV1User)
-	})
-	r.Group(func(r chi.Router) {
-		r.Post(options.BaseURL+"/api/v1/user", wrapper.PostApiV1User)
-	})
-	r.Group(func(r chi.Router) {
-		r.Get(options.BaseURL+"/api/v1/user/{userId}", wrapper.GetApiV1UserUserId)
+		r.Get(options.BaseURL+"/scores/{userId}", wrapper.GetScoresByUserID)
 	})
 
 	return r
 }
 
-type GetApiV1DepartmentRequestObject struct {
-	Body *GetApiV1DepartmentJSONRequestBody
+type N400ErrorJSONResponse struct {
+	Data         *map[string]interface{} `json:"data"`
+	ErrorCode    string                  `json:"errorCode"`
+	ErrorMessage string                  `json:"errorMessage"`
 }
 
-type GetApiV1DepartmentResponseObject interface {
-	VisitGetApiV1DepartmentResponse(w http.ResponseWriter) error
+type N500ErrorJSONResponse struct {
+	Data         *map[string]interface{} `json:"data"`
+	ErrorCode    string                  `json:"errorCode"`
+	ErrorMessage string                  `json:"errorMessage"`
 }
 
-type GetApiV1Department200JSONResponse struct {
-	Departments []Department `json:"departments"`
-}
-
-func (response GetApiV1Department200JSONResponse) VisitGetApiV1DepartmentResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type GetApiV1TenantRequestObject struct {
-}
-
-type GetApiV1TenantResponseObject interface {
-	VisitGetApiV1TenantResponse(w http.ResponseWriter) error
-}
-
-type GetApiV1Tenant200JSONResponse struct {
-	Tenants []Tenant `json:"tenants"`
-}
-
-func (response GetApiV1Tenant200JSONResponse) VisitGetApiV1TenantResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type PostApiV1TenantRequestObject struct {
-	Body *PostApiV1TenantJSONRequestBody
-}
-
-type PostApiV1TenantResponseObject interface {
-	VisitPostApiV1TenantResponse(w http.ResponseWriter) error
-}
-
-type PostApiV1Tenant200JSONResponse struct {
-	Tenant Tenant `json:"tenant"`
-}
-
-func (response PostApiV1Tenant200JSONResponse) VisitPostApiV1TenantResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type PostApiV1Tenant400JSONResponse struct {
-	Data         TenantCreateValidationError `json:"data"`
-	ErrorCode    string                      `json:"errorCode"`
-	ErrorMessage string                      `json:"errorMessage"`
-}
-
-func (response PostApiV1Tenant400JSONResponse) VisitPostApiV1TenantResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(400)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type GetApiV1TenantTenantIdRequestObject struct {
-	TenantId string `json:"tenantId"`
-}
-
-type GetApiV1TenantTenantIdResponseObject interface {
-	VisitGetApiV1TenantTenantIdResponse(w http.ResponseWriter) error
-}
-
-type GetApiV1TenantTenantId200JSONResponse struct {
-	Tenant Tenant `json:"tenant"`
-}
-
-func (response GetApiV1TenantTenantId200JSONResponse) VisitGetApiV1TenantTenantIdResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type GetApiV1TenantTenantId404JSONResponse struct {
-	Message string `json:"message"`
-}
-
-func (response GetApiV1TenantTenantId404JSONResponse) VisitGetApiV1TenantTenantIdResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(404)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type PatchApiV1TenantTenantIdRequestObject struct {
-	TenantId string `json:"tenantId"`
-	Body     *PatchApiV1TenantTenantIdJSONRequestBody
-}
-
-type PatchApiV1TenantTenantIdResponseObject interface {
-	VisitPatchApiV1TenantTenantIdResponse(w http.ResponseWriter) error
-}
-
-type PatchApiV1TenantTenantId200JSONResponse struct {
-	Tenant *Tenant `json:"tenant,omitempty"`
-}
-
-func (response PatchApiV1TenantTenantId200JSONResponse) VisitPatchApiV1TenantTenantIdResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type GetApiV1UserRequestObject struct {
-	Body *GetApiV1UserJSONRequestBody
-}
-
-type GetApiV1UserResponseObject interface {
-	VisitGetApiV1UserResponse(w http.ResponseWriter) error
-}
-
-type GetApiV1User200JSONResponse struct {
-	Users []User `json:"users"`
-}
-
-func (response GetApiV1User200JSONResponse) VisitGetApiV1UserResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type PostApiV1UserRequestObject struct {
-	Body *PostApiV1UserJSONRequestBody
-}
-
-type PostApiV1UserResponseObject interface {
-	VisitPostApiV1UserResponse(w http.ResponseWriter) error
-}
-
-type PostApiV1User200JSONResponse struct {
-	User User `json:"user"`
-}
-
-func (response PostApiV1User200JSONResponse) VisitPostApiV1UserResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type PostApiV1User400JSONResponse struct {
-	Data         UserCreateValidationError `json:"data"`
-	ErrorCode    string                    `json:"errorCode"`
-	ErrorMessage string                    `json:"errorMessage"`
-}
-
-func (response PostApiV1User400JSONResponse) VisitPostApiV1UserResponse(w http.ResponseWriter) error {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(400)
-
-	return json.NewEncoder(w).Encode(response)
-}
-
-type GetApiV1UserUserIdRequestObject struct {
+type GetScoresByUserIDRequestObject struct {
 	UserId string `json:"userId"`
+	Params GetScoresByUserIDParams
+	Body   *GetScoresByUserIDJSONRequestBody
 }
 
-type GetApiV1UserUserIdResponseObject interface {
-	VisitGetApiV1UserUserIdResponse(w http.ResponseWriter) error
+type GetScoresByUserIDResponseObject interface {
+	VisitGetScoresByUserIDResponse(w http.ResponseWriter) error
 }
 
-type GetApiV1UserUserId200JSONResponse struct {
-	User User `json:"user"`
+type GetScoresByUserID200JSONResponse struct {
+	Scores []Score `json:"scores"`
+	UserId string  `json:"userId"`
 }
 
-func (response GetApiV1UserUserId200JSONResponse) VisitGetApiV1UserUserIdResponse(w http.ResponseWriter) error {
+func (response GetScoresByUserID200JSONResponse) VisitGetScoresByUserIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
-type GetApiV1UserUserId404JSONResponse struct {
-	Message string `json:"message"`
+type GetScoresByUserID400JSONResponse struct{ N400ErrorJSONResponse }
+
+func (response GetScoresByUserID400JSONResponse) VisitGetScoresByUserIDResponse(w http.ResponseWriter) error {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(400)
+
+	return json.NewEncoder(w).Encode(response)
 }
 
-func (response GetApiV1UserUserId404JSONResponse) VisitGetApiV1UserUserIdResponse(w http.ResponseWriter) error {
+type GetScoresByUserID500JSONResponse struct{ N500ErrorJSONResponse }
+
+func (response GetScoresByUserID500JSONResponse) VisitGetScoresByUserIDResponse(w http.ResponseWriter) error {
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(404)
+	w.WriteHeader(500)
 
 	return json.NewEncoder(w).Encode(response)
 }
 
 // StrictServerInterface represents all server handlers.
 type StrictServerInterface interface {
-	// Your GET endpoint
-	// (GET /api/v1/department)
-	GetApiV1Department(ctx context.Context, request GetApiV1DepartmentRequestObject) (GetApiV1DepartmentResponseObject, error)
-
-	// (GET /api/v1/tenant)
-	GetApiV1Tenant(ctx context.Context, request GetApiV1TenantRequestObject) (GetApiV1TenantResponseObject, error)
-
-	// (POST /api/v1/tenant)
-	PostApiV1Tenant(ctx context.Context, request PostApiV1TenantRequestObject) (PostApiV1TenantResponseObject, error)
-	// Get Tenant By ID
-	// (GET /api/v1/tenant/{tenantId})
-	GetApiV1TenantTenantId(ctx context.Context, request GetApiV1TenantTenantIdRequestObject) (GetApiV1TenantTenantIdResponseObject, error)
-
-	// (PATCH /api/v1/tenant/{tenantId})
-	PatchApiV1TenantTenantId(ctx context.Context, request PatchApiV1TenantTenantIdRequestObject) (PatchApiV1TenantTenantIdResponseObject, error)
-	// Get all users
-	// (GET /api/v1/user)
-	GetApiV1User(ctx context.Context, request GetApiV1UserRequestObject) (GetApiV1UserResponseObject, error)
-
-	// (POST /api/v1/user)
-	PostApiV1User(ctx context.Context, request PostApiV1UserRequestObject) (PostApiV1UserResponseObject, error)
-	// Get User By ID
-	// (GET /api/v1/user/{userId})
-	GetApiV1UserUserId(ctx context.Context, request GetApiV1UserUserIdRequestObject) (GetApiV1UserUserIdResponseObject, error)
+	// (GET /scores/{userId})
+	GetScoresByUserID(ctx context.Context, request GetScoresByUserIDRequestObject) (GetScoresByUserIDResponseObject, error)
 }
 
-type StrictHandlerFunc = strictnethttp.StrictHTTPHandlerFunc
-type StrictMiddlewareFunc = strictnethttp.StrictHTTPMiddlewareFunc
+type (
+	StrictHandlerFunc    = strictnethttp.StrictHTTPHandlerFunc
+	StrictMiddlewareFunc = strictnethttp.StrictHTTPMiddlewareFunc
+)
 
 type StrictHTTPServerOptions struct {
 	RequestErrorHandlerFunc  func(w http.ResponseWriter, r *http.Request, err error)
@@ -2004,232 +661,33 @@ type strictHandler struct {
 	options     StrictHTTPServerOptions
 }
 
-// GetApiV1Department operation middleware
-func (sh *strictHandler) GetApiV1Department(w http.ResponseWriter, r *http.Request) {
-	var request GetApiV1DepartmentRequestObject
-
-	var body GetApiV1DepartmentJSONRequestBody
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
-		return
-	}
-	request.Body = &body
-
-	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.GetApiV1Department(ctx, request.(GetApiV1DepartmentRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "GetApiV1Department")
-	}
-
-	response, err := handler(r.Context(), w, r, request)
-
-	if err != nil {
-		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(GetApiV1DepartmentResponseObject); ok {
-		if err := validResponse.VisitGetApiV1DepartmentResponse(w); err != nil {
-			sh.options.ResponseErrorHandlerFunc(w, r, err)
-		}
-	} else if response != nil {
-		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
-	}
-}
-
-// GetApiV1Tenant operation middleware
-func (sh *strictHandler) GetApiV1Tenant(w http.ResponseWriter, r *http.Request) {
-	var request GetApiV1TenantRequestObject
-
-	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.GetApiV1Tenant(ctx, request.(GetApiV1TenantRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "GetApiV1Tenant")
-	}
-
-	response, err := handler(r.Context(), w, r, request)
-
-	if err != nil {
-		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(GetApiV1TenantResponseObject); ok {
-		if err := validResponse.VisitGetApiV1TenantResponse(w); err != nil {
-			sh.options.ResponseErrorHandlerFunc(w, r, err)
-		}
-	} else if response != nil {
-		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
-	}
-}
-
-// PostApiV1Tenant operation middleware
-func (sh *strictHandler) PostApiV1Tenant(w http.ResponseWriter, r *http.Request) {
-	var request PostApiV1TenantRequestObject
-
-	var body PostApiV1TenantJSONRequestBody
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
-		return
-	}
-	request.Body = &body
-
-	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.PostApiV1Tenant(ctx, request.(PostApiV1TenantRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "PostApiV1Tenant")
-	}
-
-	response, err := handler(r.Context(), w, r, request)
-
-	if err != nil {
-		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(PostApiV1TenantResponseObject); ok {
-		if err := validResponse.VisitPostApiV1TenantResponse(w); err != nil {
-			sh.options.ResponseErrorHandlerFunc(w, r, err)
-		}
-	} else if response != nil {
-		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
-	}
-}
-
-// GetApiV1TenantTenantId operation middleware
-func (sh *strictHandler) GetApiV1TenantTenantId(w http.ResponseWriter, r *http.Request, tenantId string) {
-	var request GetApiV1TenantTenantIdRequestObject
-
-	request.TenantId = tenantId
-
-	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.GetApiV1TenantTenantId(ctx, request.(GetApiV1TenantTenantIdRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "GetApiV1TenantTenantId")
-	}
-
-	response, err := handler(r.Context(), w, r, request)
-
-	if err != nil {
-		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(GetApiV1TenantTenantIdResponseObject); ok {
-		if err := validResponse.VisitGetApiV1TenantTenantIdResponse(w); err != nil {
-			sh.options.ResponseErrorHandlerFunc(w, r, err)
-		}
-	} else if response != nil {
-		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
-	}
-}
-
-// PatchApiV1TenantTenantId operation middleware
-func (sh *strictHandler) PatchApiV1TenantTenantId(w http.ResponseWriter, r *http.Request, tenantId string) {
-	var request PatchApiV1TenantTenantIdRequestObject
-
-	request.TenantId = tenantId
-
-	var body PatchApiV1TenantTenantIdJSONRequestBody
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
-		return
-	}
-	request.Body = &body
-
-	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.PatchApiV1TenantTenantId(ctx, request.(PatchApiV1TenantTenantIdRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "PatchApiV1TenantTenantId")
-	}
-
-	response, err := handler(r.Context(), w, r, request)
-
-	if err != nil {
-		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(PatchApiV1TenantTenantIdResponseObject); ok {
-		if err := validResponse.VisitPatchApiV1TenantTenantIdResponse(w); err != nil {
-			sh.options.ResponseErrorHandlerFunc(w, r, err)
-		}
-	} else if response != nil {
-		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
-	}
-}
-
-// GetApiV1User operation middleware
-func (sh *strictHandler) GetApiV1User(w http.ResponseWriter, r *http.Request) {
-	var request GetApiV1UserRequestObject
-
-	var body GetApiV1UserJSONRequestBody
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
-		return
-	}
-	request.Body = &body
-
-	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.GetApiV1User(ctx, request.(GetApiV1UserRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "GetApiV1User")
-	}
-
-	response, err := handler(r.Context(), w, r, request)
-
-	if err != nil {
-		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(GetApiV1UserResponseObject); ok {
-		if err := validResponse.VisitGetApiV1UserResponse(w); err != nil {
-			sh.options.ResponseErrorHandlerFunc(w, r, err)
-		}
-	} else if response != nil {
-		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
-	}
-}
-
-// PostApiV1User operation middleware
-func (sh *strictHandler) PostApiV1User(w http.ResponseWriter, r *http.Request) {
-	var request PostApiV1UserRequestObject
-
-	var body PostApiV1UserJSONRequestBody
-	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
-		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
-		return
-	}
-	request.Body = &body
-
-	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.PostApiV1User(ctx, request.(PostApiV1UserRequestObject))
-	}
-	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "PostApiV1User")
-	}
-
-	response, err := handler(r.Context(), w, r, request)
-
-	if err != nil {
-		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(PostApiV1UserResponseObject); ok {
-		if err := validResponse.VisitPostApiV1UserResponse(w); err != nil {
-			sh.options.ResponseErrorHandlerFunc(w, r, err)
-		}
-	} else if response != nil {
-		sh.options.ResponseErrorHandlerFunc(w, r, fmt.Errorf("unexpected response type: %T", response))
-	}
-}
-
-// GetApiV1UserUserId operation middleware
-func (sh *strictHandler) GetApiV1UserUserId(w http.ResponseWriter, r *http.Request, userId string) {
-	var request GetApiV1UserUserIdRequestObject
+// GetScoresByUserID operation middleware
+func (sh *strictHandler) GetScoresByUserID(w http.ResponseWriter, r *http.Request, userId string, params GetScoresByUserIDParams) {
+	var request GetScoresByUserIDRequestObject
 
 	request.UserId = userId
+	request.Params = params
+
+	var body GetScoresByUserIDJSONRequestBody
+	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		sh.options.RequestErrorHandlerFunc(w, r, fmt.Errorf("can't decode JSON body: %w", err))
+		return
+	}
+	request.Body = &body
 
 	handler := func(ctx context.Context, w http.ResponseWriter, r *http.Request, request interface{}) (interface{}, error) {
-		return sh.ssi.GetApiV1UserUserId(ctx, request.(GetApiV1UserUserIdRequestObject))
+		return sh.ssi.GetScoresByUserID(ctx, request.(GetScoresByUserIDRequestObject))
 	}
 	for _, middleware := range sh.middlewares {
-		handler = middleware(handler, "GetApiV1UserUserId")
+		handler = middleware(handler, "GetScoresByUserID")
 	}
 
 	response, err := handler(r.Context(), w, r, request)
 
 	if err != nil {
 		sh.options.ResponseErrorHandlerFunc(w, r, err)
-	} else if validResponse, ok := response.(GetApiV1UserUserIdResponseObject); ok {
-		if err := validResponse.VisitGetApiV1UserUserIdResponse(w); err != nil {
+	} else if validResponse, ok := response.(GetScoresByUserIDResponseObject); ok {
+		if err := validResponse.VisitGetScoresByUserIDResponse(w); err != nil {
 			sh.options.ResponseErrorHandlerFunc(w, r, err)
 		}
 	} else if response != nil {

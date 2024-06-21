@@ -2,13 +2,14 @@ package worker
 
 import (
 	"context"
-	"go_chi_template/config"
-	"go_chi_template/internal/app/task"
-	"go_chi_template/internal/worker/middleware"
 	"log"
 
 	"github.com/hibiken/asynq"
 	"go.uber.org/zap"
+
+	"first_move/config"
+	"first_move/internal/app/task"
+	"first_move/internal/worker/middleware"
 )
 
 type Worker struct {
@@ -43,13 +44,14 @@ func (w *Worker) Start() {
 		},
 	)
 
+	q := task.NewQueue(w.app)
+
 	// mux maps a type to a handler
 	mux := asynq.NewServeMux()
 	mux.Use(middleware.LoggingMiddleware)
-	t := task.NewQueue(w.app)
 
 	// register handlers
-	mux.HandleFunc(task.TENANT_CLEANUP, t.HandleTenantCleanup)
+	mux.HandleFunc(task.PARSE_TEXT_CHAT, q.ParseTextChat)
 
 	if err := srv.Run(mux); err != nil {
 		log.Fatalf("Failed to start worker: %v", err)

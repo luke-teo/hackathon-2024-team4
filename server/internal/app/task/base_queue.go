@@ -1,10 +1,10 @@
 package task
 
 import (
-	"go_chi_template/config"
-
 	"github.com/hibiken/asynq"
 	"go.uber.org/zap"
+
+	"first_move/config"
 )
 
 type Queue struct {
@@ -22,7 +22,6 @@ func queueTask(app *config.App, task *asynq.Task) error {
 	taskStatus, err := app.Queue().Client.Enqueue(
 		task,
 	)
-
 	if err != nil {
 		app.Logger().Error("Failed to queue task", zap.String("errorMessage", err.Error()))
 		return err
