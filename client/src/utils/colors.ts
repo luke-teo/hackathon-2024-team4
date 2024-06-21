@@ -8,6 +8,7 @@ export const colors = {
 	BorderBase: "#B9C0CC",
 	TextBase: "#2F2F2F",
 	TextForegroundDanger: "#f44336",
+	TextForegroundHigh: "#1C1C1C",
 	TextForegroundHighlight: "#7A46E3",
 	TextForegroundLow: "#535D6E",
 	TextForegroundSuccess: "#66bb6a",
