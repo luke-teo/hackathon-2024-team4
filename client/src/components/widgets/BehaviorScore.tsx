@@ -23,6 +23,16 @@ export const BehaviorScore = (): JSX.Element => {
   const latestScore =
     scores && scores.length > 1 ? scores[scores.length - 1] : null;
 
+  const isWarning = () => {
+    const zScore = latestScore?.zScore ?? 0;
+    return (zScore < -2 && zScore > -3) || (zScore > 2 && zScore < 3);
+  };
+
+  const isUrgent = () => {
+    const zScore = latestScore?.zScore ?? 0;
+    return zScore < -3 || zScore > 3;
+  };
+
   console.log(latestScore?.zScore);
   if (selectedUser === null) {
     return (
@@ -90,13 +100,13 @@ export const BehaviorScore = (): JSX.Element => {
           Behavior score
         </Typography>
 
-        {latestScore.zScore <= 2 ? (
+        {isWarning() ? (
           <TrendingUp
             sx={{
               color: colors.TextForegroundSuccess,
             }}
           />
-        ) : latestScore.zScore > 3 ? (
+        ) : isUrgent() ? (
           <TrendingDown
             sx={{
               color: colors.TextForegroundDanger,
@@ -135,16 +145,15 @@ export const BehaviorScore = (): JSX.Element => {
           <Typography
             sx={{
               fontSize: 72,
-              color:
-                latestScore.zScore <= 2
-                  ? colors.TextForegroundSuccess
-                  : latestScore.zScore > 3
-                    ? colors.TextForegroundDanger
-                    : colors.TextForegroundWarning,
+              color: isWarning()
+                ? colors.TextForegroundSuccess
+                : isUrgent()
+                  ? colors.TextForegroundDanger
+                  : colors.TextForegroundWarning,
               fontWeight: "bold",
             }}
           >
-            {latestScore.zScore <= 2 ? "A" : latestScore.zScore > 3 ? "C" : "B"}
+            {isWarning() ? "A" : isUrgent() ? "C" : "B"}
           </Typography>
         </Box>
       </Box>
@@ -164,9 +173,9 @@ export const BehaviorScore = (): JSX.Element => {
             color: colors.TextForegroundLow,
           }}
         >
-          {latestScore.zScore <= 2
+          {isWarning()
             ? "This person is doing well."
-            : latestScore.zScore > 3
+            : isUrgent()
               ? "This person's performance is worrisome."
               : "This person requires some attention."}
         </Typography>
