@@ -7,170 +7,181 @@ import { DateTime } from "luxon";
 import { useGetScoresByUserIdQuery } from "../../services/api/v1";
 
 export const BehaviorScore = (): JSX.Element => {
-  const { selectedUser } = useContext(SelectedUserContext);
+	const { selectedUser } = useContext(SelectedUserContext);
 
-  const now = DateTime.now();
-  const start = now.startOf("month");
-  const end = now.endOf("month");
+	const now = DateTime.now();
+	const start = now.startOf("month");
+	const end = now.endOf("month");
 
-  const { data: getUserScores } = useGetScoresByUserIdQuery({
-    userId: selectedUser?.id.toString() ?? "",
-    startDate: start.toISODate() ?? "",
-    endDate: end.toISODate() ?? "",
-  });
+	const { data: getUserScores } = useGetScoresByUserIdQuery({
+		userId: selectedUser?.id.toString() ?? "",
+		startDate: start.toISODate() ?? "",
+		endDate: end.toISODate() ?? "",
+	});
 
-  const scores = getUserScores?.scores;
-  const latestScore =
-    scores && scores.length > 1 ? scores[scores.length - 1] : null;
+	const scores = getUserScores?.scores;
+	const latestScore =
+		scores && scores.length > 1 ? scores[scores.length - 1] : null;
 
-  console.log(latestScore?.zScore);
-  if (selectedUser === null) {
-    return (
-      <Box
-        sx={{
-          alignItems: "center",
-          background: colors.BackgroundBaseWhite,
-          borderRadius: 2,
-          display: "flex",
-          justifyContent: "center",
-          p: 2,
-        }}
-      >
-        <Typography sx={{ color: colors.TextForegroundLow }}>
-          No user selected
-        </Typography>
-      </Box>
-    );
-  }
+	const isWarning = () => {
+		const zScore = Math.abs(latestScore?.zScore ?? 0);
+		return zScore > 1 && zScore < 2;
+	};
 
-  if (!latestScore) {
-    return (
-      <Box
-        sx={{
-          alignItems: "center",
-          background: colors.BackgroundBaseWhite,
-          borderRadius: 2,
-          display: "flex",
-          justifyContent: "center",
-          p: 2,
-        }}
-      >
-        <CircularProgress />
-      </Box>
-    );
-  }
+	const isUrgent = () => {
+		const zScore = Math.abs(latestScore?.zScore ?? 0);
+		return zScore > 2;
+	};
 
-  return (
-    <Box
-      sx={{
-        flex: 0,
-        height: "fit-content",
-        borderRadius: 2,
-        background: colors.BackgroundBaseWhite,
-      }}
-    >
-      <Box
-        sx={{
-          alignItems: "center",
-          borderBottom: 1,
-          borderColor: colors.BorderBase,
-          display: "flex",
-          height: 60,
-          justifyContent: "space-between",
-          px: 2,
-        }}
-      >
-        <Typography
-          sx={{
-            fontSize: 20,
-            color: colors.TextForegroundLow,
-            fontWeight: "bold",
-          }}
-        >
-          Behavior score
-        </Typography>
+	console.log(latestScore?.zScore);
+	console.log("iswarning", isWarning());
+	console.log("isUrgent", isUrgent());
+	if (selectedUser === null) {
+		return (
+			<Box
+				sx={{
+					alignItems: "center",
+					background: colors.BackgroundBaseWhite,
+					borderRadius: 2,
+					display: "flex",
+					justifyContent: "center",
+					p: 2,
+				}}
+			>
+				<Typography sx={{ color: colors.TextForegroundLow }}>
+					No user selected
+				</Typography>
+			</Box>
+		);
+	}
 
-        {latestScore.zScore <= 2 ? (
-          <TrendingUp
-            sx={{
-              color: colors.TextForegroundSuccess,
-            }}
-          />
-        ) : latestScore.zScore > 3 ? (
-          <TrendingDown
-            sx={{
-              color: colors.TextForegroundDanger,
-            }}
-          />
-        ) : (
-          <TrendingFlat
-            sx={{
-              color: colors.TextForegroundWarning,
-            }}
-          />
-        )}
-      </Box>
+	if (!latestScore) {
+		return (
+			<Box
+				sx={{
+					alignItems: "center",
+					background: colors.BackgroundBaseWhite,
+					borderRadius: 2,
+					display: "flex",
+					justifyContent: "center",
+					p: 2,
+				}}
+			>
+				<CircularProgress />
+			</Box>
+		);
+	}
 
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: "1fr minmax(50%, 200px) 1fr",
-          gridTemplateRows: "1fr minmax(50%, 200px) 1fr",
-          p: 2,
-        }}
-      >
-        <Box
-          sx={{
-            alignItems: "center",
-            aspectRatio: "1/1",
-            border: 1,
-            borderColor: colors.BorderBase,
-            borderRadius: "50%",
-            display: "flex",
-            gridColumn: "2 / 3",
-            gridRow: "2 / 3",
-            justifyContent: "center",
-          }}
-        >
-          <Typography
-            sx={{
-              fontSize: 72,
-              color:
-                latestScore.zScore <= 2
-                  ? colors.TextForegroundSuccess
-                  : latestScore.zScore > 3
-                    ? colors.TextForegroundDanger
-                    : colors.TextForegroundWarning,
-              fontWeight: "bold",
-            }}
-          >
-            {latestScore.zScore <= 2 ? "A" : latestScore.zScore > 3 ? "C" : "B"}
-          </Typography>
-        </Box>
-      </Box>
+	return (
+		<Box
+			sx={{
+				flex: 0,
+				height: "fit-content",
+				borderRadius: 2,
+				background: colors.BackgroundBaseWhite,
+			}}
+		>
+			<Box
+				sx={{
+					alignItems: "center",
+					borderBottom: 1,
+					borderColor: colors.BorderBase,
+					display: "flex",
+					height: 60,
+					justifyContent: "space-between",
+					px: 2,
+				}}
+			>
+				<Typography
+					sx={{
+						fontSize: 20,
+						color: colors.TextForegroundLow,
+						fontWeight: "bold",
+					}}
+				>
+					Behavior score
+				</Typography>
 
-      <Box
-        sx={{
-          alignItems: "center",
-          backgroundColor: colors.BackgroundHighlight,
-          display: "flex",
-          justifyContent: "center",
-          p: 2,
-        }}
-      >
-        <Typography
-          sx={{
-            fontSize: 16,
-            color: colors.TextForegroundLow,
-          }}
-        >
-          {latestScore.zScore <= 2
-            ? "This person is doing well."
-            : latestScore.zScore > 3
-              ? "This person's performance is worrisome."
-              : "This person requires some attention."}
-        </Typography>
-      </Box>
-    </Box>
-  );
+				{isWarning() ? (
+					<TrendingFlat
+						sx={{
+							color: colors.TextForegroundWarning,
+						}}
+					/>
+				) : isUrgent() ? (
+					<TrendingDown
+						sx={{
+							color: colors.TextForegroundDanger,
+						}}
+					/>
+				) : (
+					<TrendingUp
+						sx={{
+							color: colors.TextForegroundSuccess,
+						}}
+					/>
+				)}
+			</Box>
+
+			<Box
+				sx={{
+					display: "grid",
+					gridTemplateColumns: "1fr minmax(50%, 200px) 1fr",
+					gridTemplateRows: "1fr minmax(50%, 200px) 1fr",
+					p: 2,
+				}}
+			>
+				<Box
+					sx={{
+						alignItems: "center",
+						aspectRatio: "1/1",
+						border: 1,
+						borderColor: colors.BorderBase,
+						borderRadius: "50%",
+						display: "flex",
+						gridColumn: "2 / 3",
+						gridRow: "2 / 3",
+						justifyContent: "center",
+					}}
+				>
+					<Typography
+						sx={{
+							fontSize: 72,
+							color: isWarning()
+								? colors.TextForegroundWarning
+								: isUrgent()
+									? colors.TextForegroundDanger
+									: colors.TextForegroundSuccess,
+							fontWeight: "bold",
+						}}
+					>
+						{isWarning() ? "B" : isUrgent() ? "C" : "A"}
+					</Typography>
+				</Box>
+			</Box>
+
+			<Box
+				sx={{
+					alignItems: "center",
+					backgroundColor: colors.BackgroundHighlight,
+					display: "flex",
+					justifyContent: "center",
+					p: 2,
+				}}
+			>
+				<Typography
+					sx={{
+						fontSize: 16,
+						color: colors.TextForegroundLow,
+					}}
+				>
+					{isWarning()
+						? "This person requires some attention."
+						: isUrgent()
+							? "This person's performance is worrisome."
+							: "This person is doing well."}
+				</Typography>
+			</Box>
+		</Box>
+	);
 };

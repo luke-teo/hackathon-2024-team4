@@ -31,6 +31,16 @@ export const UserListItem = ({ user, setValue }: Props) => {
 	const latestScore =
 		scores && scores.length > 1 ? scores[scores.length - 1] : null;
 
+	const isWarning = () => {
+		const zScore = Math.abs(latestScore?.zScore ?? 0);
+		return zScore > 1 && zScore < 2;
+	};
+
+	const isUrgent = () => {
+		const zScore = Math.abs(latestScore?.zScore ?? 0);
+		return zScore > 2;
+	};
+
 	const handleSelectUser = (u: User) => {
 		setSelectedUser(u);
 		setValue(u);
@@ -94,12 +104,12 @@ export const UserListItem = ({ user, setValue }: Props) => {
 						{user.name}
 					</Typography>
 
-					{latestScore?.zScore ?? 0 <= 2 ? (
-						<></>
-					) : latestScore?.zScore ?? 0 > 3 ? (
+					{isWarning() ? (
+						<Chip color="warning" label="Review" size="small" />
+					) : isUrgent() ? (
 						<Chip color="error" label="Required" size="small" />
 					) : (
-						<Chip color="warning" label="Review" size="small" />
+						<></>
 					)}
 				</Box>
 			</Box>

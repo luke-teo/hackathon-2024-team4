@@ -44,8 +44,8 @@ export const LineChartComponent = ({ datetime }: Props) => {
 		score: s.currentScore,
 		mean: s.mean,
 		stdRange: [
-			s.mean - s.standardDeviation * 2,
-			s.mean + s.standardDeviation * 2,
+			s.mean - s.standardDeviation * 1,
+			s.mean + s.standardDeviation * 1,
 		],
 	}));
 
