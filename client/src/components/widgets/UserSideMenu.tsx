@@ -225,12 +225,10 @@ export const UserSideMenu = () => {
                     color="error"
                     label="Required"
                     size="small"
-                    variant="outlined"
                   /> : <Chip
                     color="warning"
                     label="Review"
                     size="small"
-                    variant="outlined"
                   />}
                 </Box>
               </Box>
