@@ -32,13 +32,13 @@ export const UserListItem = ({ user, setValue }: Props) => {
 		scores && scores.length > 1 ? scores[scores.length - 1] : null;
 
 	const isWarning = () => {
-		const zScore = latestScore?.zScore ?? 0;
-		return (zScore < -2 && zScore > -3) || (zScore > 2 && zScore < 3);
+		const zScore = Math.abs(latestScore?.zScore ?? 0);
+		return zScore > 2 && zScore < 3;
 	};
 
 	const isUrgent = () => {
-		const zScore = latestScore?.zScore ?? 0;
-		return zScore < -3 || zScore > 3;
+		const zScore = Math.abs(latestScore?.zScore ?? 0);
+		return zScore > 3;
 	};
 
 	const handleSelectUser = (u: User) => {
@@ -105,11 +105,11 @@ export const UserListItem = ({ user, setValue }: Props) => {
 					</Typography>
 
 					{isWarning() ? (
-						<></>
+						<Chip color="warning" label="Review" size="small" />
 					) : isUrgent() ? (
 						<Chip color="error" label="Required" size="small" />
 					) : (
-						<Chip color="warning" label="Review" size="small" />
+						<></>
 					)}
 				</Box>
 			</Box>
