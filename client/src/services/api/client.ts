@@ -7,6 +7,7 @@ export const baseApiV1 = createApi({
     prepareHeaders: (headers) => {
       headers.set("Accept", "application/json");
       headers.set("Content-Type", "application/json");
+      headers.set("ngrok-skip-browser-warning", "21312");
       return headers;
     },
   }),

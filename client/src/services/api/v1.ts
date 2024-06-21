@@ -12,7 +12,6 @@ const injectedRtkApi = api
       >({
         query: (queryArg) => ({
           url: `/scores/${queryArg.userId}`,
-          body: queryArg.body,
           params: { startDate: queryArg.startDate, endDate: queryArg.endDate },
         }),
       }),
@@ -41,7 +40,6 @@ export type GetScoresByUserIdApiArg = {
   startDate: string;
   /** End date */
   endDate: string;
-  body: Blob;
 };
 export type PostUploadCsvApiResponse = /** status 200 OK */ void;
 export type PostUploadCsvApiArg = {

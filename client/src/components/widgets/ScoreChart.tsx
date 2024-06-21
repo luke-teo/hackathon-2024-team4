@@ -3,7 +3,6 @@ import { colors } from "../../utils/colors";
 import { useContext, useState } from "react";
 import { SelectedUserContext } from "../context/SelectedUserContext";
 import { DateTime } from "luxon";
-import { mock } from "../../mock/mock";
 import { ChevronLeft, ChevronRight } from "@mui/icons-material";
 import { LineChartComponent } from "../LineChartComponent";
 
@@ -49,12 +48,6 @@ export const ScoreChart = () => {
 			</Box>
 		);
 	}
-
-	const userData = mock.find(
-		(u) => Number.parseInt(u.userId) === selectedUser.id,
-	);
-
-	const scores = userData?.scores ?? [];
 
 	return (
 		<Box
@@ -156,7 +149,7 @@ export const ScoreChart = () => {
 						p: 2,
 					}}
 				>
-					<LineChartComponent datetime={datetime} scores={scores} />
+					<LineChartComponent datetime={datetime} />
 				</Box>
 			</Box>
 		</Box>

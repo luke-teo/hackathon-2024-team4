@@ -9,16 +9,30 @@ import {
 	ComposedChart,
 } from "recharts";
 import { DateTime } from "luxon";
-import type { Score } from "../services/api/v1";
-import { Box, Typography } from "@mui/material";
+import { useGetScoresByUserIdQuery } from "../services/api/v1";
+import { Box, CircularProgress, Typography } from "@mui/material";
 import { colors } from "../utils/colors";
+import { useContext } from "react";
+import { SelectedUserContext } from "./context/SelectedUserContext";
 
 type Props = {
 	datetime: DateTime;
-	scores: Score[];
 };
 
-export const LineChartComponent = ({ datetime, scores }: Props) => {
+export const LineChartComponent = ({ datetime }: Props) => {
+	const { selectedUser } = useContext(SelectedUserContext);
+	const start = datetime.startOf("month");
+	const end = datetime.endOf("month");
+	const userId = selectedUser?.id.toString() ?? "";
+
+	const { data: getUserScores } = useGetScoresByUserIdQuery({
+		userId: userId,
+		startDate: start.toISODate() ?? "",
+		endDate: end.toISODate() ?? "",
+	});
+
+	const scores = getUserScores?.scores ?? [];
+
 	const relevantScores = scores.filter(
 		(s) =>
 			DateTime.fromISO(s.date).month === datetime.month &&
@@ -30,12 +44,18 @@ export const LineChartComponent = ({ datetime, scores }: Props) => {
 		score: s.currentScore,
 		mean: s.mean,
 		stdRange: [
-			s.currentScore - s.standardDeviation,
-			s.currentScore + s.standardDeviation,
+			s.mean - s.standardDeviation * 2,
+			s.mean + s.standardDeviation * 2,
 		],
 	}));
 
-	if (data.length < 1) {
+	const currentMonth = DateTime.now().month;
+	// Check if data is empty and the month is between May and the current month
+	if (
+		data.length < 1 &&
+		datetime.month >= 4 &&
+		datetime.month <= currentMonth
+	) {
 		return (
 			<Box
 				sx={{
@@ -46,6 +66,24 @@ export const LineChartComponent = ({ datetime, scores }: Props) => {
 					justifyContent: "center",
 				}}
 			>
+				<CircularProgress />
+			</Box>
+		);
+	}
+
+	// Check if data is empty and the month is less than April
+	if (data.length < 1 && datetime.month < 4) {
+		return (
+			<Box
+				sx={{
+					height: "100%",
+					width: "100%",
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+				}}
+			>
+				{/* Handle this case if needed */}
 				<Typography
 					sx={{
 						color: colors.TextForegroundLow,
@@ -53,7 +91,33 @@ export const LineChartComponent = ({ datetime, scores }: Props) => {
 						fontWeight: "bold",
 					}}
 				>
-					No Data is Available for this Period
+					No Data Available Before April
+				</Typography>
+			</Box>
+		);
+	}
+
+	// Check if data is empty and the month is greater than the current month
+	if (data.length < 1 && datetime.month > currentMonth) {
+		return (
+			<Box
+				sx={{
+					height: "100%",
+					width: "100%",
+					display: "flex",
+					alignItems: "center",
+					justifyContent: "center",
+				}}
+			>
+				{/* Handle this case if needed */}
+				<Typography
+					sx={{
+						color: colors.TextForegroundLow,
+						fontSize: 16,
+						fontWeight: "bold",
+					}}
+				>
+					No Data Available for Future Dates
 				</Typography>
 			</Box>
 		);
